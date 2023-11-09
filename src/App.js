@@ -1,17 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
-import Home01 from './components/landingPage/home/home01';
-import Home02 from './components/landingPage/home/home02';
-import Home03 from './components/landingPage/home/home03';
+import logo from "./logo.svg";
+import "./App.css";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import LandingPage from "./components/pages/landingPage";
+import VerificationHome from "./components/verification/verificationHome";
+import Footer from "./components/header&footer/footer";
+import VerificationSubmit from "./components/verification/verificationSubmit";
+import { BrowserRouter, Routes,Route } from "react-router-dom";
+import VerificationHomePage from "./components/pages/verificationHomePage";
+import VerificationSubmitPage from "./components/pages/verificationSubmitPage";
 
 function App() {
   return (
-   <>
- <Home01/>
- <Home02/>
- <Home03/>
-   </>
+    <>
+      {/* <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<VerificationHomePage/>} />
+          <Route
+            path="/documentVerification"
+            element={<VerificationSubmitPage />}
+          />
+        </Routes>
+      </BrowserRouter> */}
+      <LandingPage/>
+    </>
   );
 }
 

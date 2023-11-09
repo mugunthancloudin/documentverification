@@ -14,7 +14,7 @@ export default function Home03() {
 
             <div className="col-lg-6 home02Bg">
               <div className="homespace mt-4">&nbsp;</div>
-              <h2 className="mt-3">Why conduct Document Verification?</h2>
+              <h1 className="mt-3">Why conduct Document Verification?</h1>
               <div>
                 <h5 className="mt-3 home03h6">
                   <u> Benefits of conducting document verification:</u>
@@ -38,6 +38,8 @@ export default function Home03() {
                     working behaviour.
                   </li>
                 </ul>
+
+                <button className="mt-5 ms-3 p-3 text-white bg-danger border-0">Get Started</button>
               </div>
             </div>
           </div>

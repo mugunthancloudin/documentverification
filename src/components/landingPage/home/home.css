@@ -52,7 +52,7 @@
 }
 
 .homeh2P{
-    margin-top: 5%;
+    margin-top: 4%;
     font-size:22px;
 }
 
@@ -62,7 +62,41 @@
 }
 
 .home03li{
-    font-size: 100%;
+    font-size: 120%;
     line-height: 40px;
     font-style: italic;
+}
+
+.home05Text{
+    font-weight:bolder;
+    font-size:300%;
+}
+
+.home05P{
+    font-size:x-large;
+    font-weight: 400;
+}
+
+.home05Bg{
+    background-color: rgb(245,245,245);
+}
+
+.contactButton{
+    background-color: rgb(127,129,255);
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-weight: 700;
+}
+
+.contactButton:hover {
+    background-color:black;
+}
+
+.contactBg{
+    background-color: rgb(245,245,245);
+}
+
+.contactP{
+    font-size:x-large
 }
