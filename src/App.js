@@ -22,8 +22,25 @@ function App() {
         </Routes>
       </BrowserRouter> */}
       <LandingPage/>
+
     </>
   );
 }
 
 export default App;
+
+// import React from "react";
+// import Blockchain from "./blockchain"; // Import the Blockchain component
+// import UploadToIpfs from "./uploadFile";
+
+// export default function ConnectButton() {
+  
+//   return (
+//     <div>
+//       <w3m-button/>
+//       <h1>Blockchain Functions</h1>
+//       <Blockchain />
+//       <UploadToIpfs/>
+//     </div>
+//   );
+// }
