@@ -5,8 +5,8 @@ import "./home.css";
 export default function Home02() {
   return (
     <>
-      <div className="container-fluid">
-        <div className="container mb-5">
+      <div className="container-fluid" id="action2">
+        <div className="container  mb-5">
           <div className="row">
             <h5 className="home02_h5">
               Document  fraud and identity theft are on the rise, safeguard your
