@@ -4,7 +4,7 @@ import "./home.css";
 export default function Home01() {
   return (
     <>
-      <div className="container-fluid homeBg">
+      <div className="container-fluid homeBg" id="action1">
         <div className="container">
           <div className="row">
             <div className="col-lg-6">
