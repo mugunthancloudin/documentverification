@@ -17,7 +17,7 @@ import { Navbar, Nav, Button,NavLink } from "react-bootstrap";
 // } from "@rainbow-me/rainbowkit";
 
 export default function Scrollbar() {
-  // const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   // const [injectAmount, setInjectAmount] = useState(0);
   // const [balance, setBalance] = useState();
   // const [ownerAddress, setOwnerAddress] = useState("");
