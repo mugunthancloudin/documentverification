@@ -82,16 +82,16 @@ export default function Blockchain() {
     }
   };
 
-  const addCompanies = async (ids, addresses, names) => {
-    try {
-      const contract = await GetEthereumContract();
-      const transaction = await contract.addCompanies(ids, addresses, names);
-      await transaction.wait();
-      console.log(`Companies added successfully`);
-    } catch (error) {
-      console.error("Error adding companies:", error);
-    }
-  };
+  // const addCompanies = async (ids, addresses, names) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const transaction = await contract.addCompanies(ids, addresses, names);
+  //     await transaction.wait();
+  //     console.log(`Companies added successfully`);
+  //   } catch (error) {
+  //     console.error("Error adding companies:", error);
+  //   }
+  // };
 
   const removeCompanies = async (ids) => {
     try {
@@ -104,16 +104,16 @@ export default function Blockchain() {
     }
   };
   
-  const addCandidates = async (ids, names) => {
-    try {
-      const contract = await GetEthereumContract();
-      const transaction = await contract.addCandidates(ids, names);
-      await transaction.wait();
-      console.log(`Candidates added successfully`);
-    } catch (error) {
-      console.error("Error adding candidates:", error);
-    }
-  };
+  // const addCandidates = async (ids, names) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const transaction = await contract.addCandidates(ids, names);
+  //     await transaction.wait();
+  //     console.log(`Candidates added successfully`);
+  //   } catch (error) {
+  //     console.error("Error adding candidates:", error);
+  //   }
+  // };
 
   const removeCandidates = async (ids) => {
     try {
@@ -431,6 +431,8 @@ export default function Blockchain() {
           onChange={(e) => setGetCandidateId(e.target.value)}
         />
         <button onClick={handleGetDocumentClick}>Get Document</button>
+
+        
       </div>
     </div>
   );
