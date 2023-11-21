@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Link } from 'react-scroll';
+import brandLogo from "../../../assets/header/verificationLogo.jpg";
 
-// import brandLogo from "../../assets/Header & footer/header/medichainlogo.svg"
 import { Navbar, Nav, Button,NavLink } from "react-bootstrap";
 // import { truncate, useGlobalState } from "../../../store";
 // import { useAccount, useBalance, useNetwork } from "wagmi";
@@ -16,43 +16,43 @@ import { Navbar, Nav, Button,NavLink } from "react-bootstrap";
 // } from "@rainbow-me/rainbowkit";
 
 export default function Scrollbar() {
-//   const { address, isConnected } = useAccount();
-//   const [injectAmount, setInjectAmount] = useState(0);
-//   const [balance, setBalance] = useState();
-//   const [ownerAddress, setOwnerAddress] = useState("");
-//   const { chain } = useNetwork();
+  // const { address, isConnected } = useAccount();
+  // const [injectAmount, setInjectAmount] = useState(0);
+  // const [balance, setBalance] = useState();
+  // const [ownerAddress, setOwnerAddress] = useState("");
+  // const { chain } = useNetwork();
 
-//   useState(() => {
-//     if (isConnected) {
-//       setGlobalState("connectedAccount", isConnected);
-//     }
-//   }, [isConnected]);
+  // useState(() => {
+  //   if (isConnected) {
+  //     setGlobalState("connectedAccount", isConnected);
+  //   }
+  // }, [isConnected]);
 
-//   const { data } = useBalance({
-//     address: address,
-//   });
+  // const { data } = useBalance({
+  //   address: address,
+  // });
 
-//   const { openAccountModal } = useAccountModal();
+  // const { openAccountModal } = useAccountModal();
 
-//   const { openConnectModal } = useConnectModal();
+  // const { openConnectModal } = useConnectModal();
 
-//   const { openChainModal } = useChainModal();
+  // const { openChainModal } = useChainModal();
 
-//   const [connectedAccount] = useGlobalState("connectedAccount");
+  // const [connectedAccount] = useGlobalState("connectedAccount");
 
-//   useEffect(() => {
-//     async function fetchData() {
-//       try {
-//         const checkConnectionState = getGlobalState("connectedAccount");
-//         if (isConnected) {
-//           await blockchain.isWallectConnected();
-//           const ownerAddress = await blockchain.getContractOwner();
-//           setOwnerAddress(ownerAddress.toLowerCase());
-//         }
-//       } catch (error) {}
-//     }
-//     fetchData();
-//   }, [isConnected]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const checkConnectionState = getGlobalState("connectedAccount");
+  //       if (isConnected) {
+  //         await blockchain.isWallectConnected();
+  //         const ownerAddress = await blockchain.getContractOwner();
+  //         setOwnerAddress(ownerAddress.toLowerCase());
+  //       }
+  //     } catch (error) {}
+  //   }
+  //   fetchData();
+  // }, [isConnected]);
 
 
 
@@ -62,7 +62,7 @@ export default function Scrollbar() {
         <Container fluid>
         <NavLink href="/">
             <div className="d-flex">
-            {/* <img src={brandLogo} width={40} className="navlogo" /> */}
+            <img src={brandLogo} width={40} className="navlogo" />
             <h4 className="ms-3 mt-3 ">Document Verification</h4>
             </div>
           </NavLink>
