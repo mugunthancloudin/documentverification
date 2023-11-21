@@ -20,8 +20,8 @@ function App() {
           />
         </Routes>
       </BrowserRouter> */}
-      <w3m-button/> 
-      <UploadToIpfs/>
+      {/* <w3m-button/> 
+      <UploadToIpfs/> */}
       <LandingPage/>
       
 
