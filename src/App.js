@@ -8,6 +8,7 @@ import LandingPage from "./pages/landingPage";
 import UploadToIpfs from "./uploadFile";
 
 
+
 function App() {
   return (
     <>
@@ -20,8 +21,8 @@ function App() {
           />
         </Routes>
       </BrowserRouter> */}
-      <w3m-button/> 
-      <UploadToIpfs/>
+      {/* <w3m-button/> 
+      <UploadToIpfs/> */}
       <LandingPage/>
       
 

@@ -13,6 +13,8 @@ const providerUrl =
 
 export default function Blockchain() {
   const { address,isConnected } = useAccount()
+  console.log(address);
+  console.log(isConnected);
   const [newMaxVerifiers, setNewMaxVerifiers] = useState("");
   const [getCandidateId, setGetCandidateId] = useState("");
   const [getCompanyId, setGetCompanyId] = useState("");
