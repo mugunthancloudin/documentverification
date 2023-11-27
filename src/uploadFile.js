@@ -1,83 +1,78 @@
 import React, { useState } from 'react';
-import Moralis from 'moralis';
-import abi from "./abis/src/contracts/Verification.sol/Verification.json";
-import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
+import axios from 'axios';
+import FormData from 'form-data';
+
+const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI1NWM1YzJmNC0xZGRlLTRiNWEtYTBlMi1lYTNkNjVmNWFhMjIiLCJlbWFpbCI6ImZlYXJvZmFsbGdhbWVyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfSx7ImlkIjoiTllDMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJkNTA0MmU2ZDllNTgzYjE5MjRhYiIsInNjb3BlZEtleVNlY3JldCI6IjQ0ODAwYjQ5YWNlZmNlNzhiM2U2MjRlZmFmNzU2YjVjZDZhODJkYTk2MGM5MzdiMjQ3YWIyODNhZmUwZjBmYTYiLCJpYXQiOjE3MDA3Mzg5OTJ9.2CI_ewpLvbwj7bgxW9Iu6QnDqC2gkjyTJHtyk6DNp4U'; // Replace with your actual JWT token
 
 
-const { ethereum } = window;
-const contractAddress = "0x7bfa1898152cdce9d601f3029e69b23011b4210d";
-const contractAbi = abi.abi;
-
-
-
-function UploadToIpfs() {
+const UploadToIPFS = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [candidateIds, setCandidateIds] = useState('');
-  const { address,isConnected } = useAccount()
-  
-  const GetEthereumContract = async () => {
-    //check whether device pc or mobile
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    let contract = new ethers.Contract(contractAddress, contractAbi, signer);
-    // console.log(contract);
-    return contract; 
-};
 
   const handleFileChange = (event) => {
-    setSelectedFiles(event.target.files);
+    setSelectedFiles([...selectedFiles, ...event.target.files]);
   };
 
-  const handleCandidateIdsChange = (event) => {
-    setCandidateIds(event.target.value);
-  }; 
+  const handleChooseFilesClick = () => {
+    document.getElementById('fileInput').click();
+  };
 
-  const uploadFiles = async () => {
-    await Moralis.start({
-      apiKey: "YNBmlTN0i6gW08Qne6deVbRUybCIkyRqVkEqhIciFOmIlEcw6YcIJ7BIjwPql7Jq",
-    });
+  const handleUploadClick = async () => {
+    if (selectedFiles.length === 0) {
+      console.log('No files selected.');
+      return;
+    }
 
-    const filesArray = Array.from(selectedFiles);
+    for (const file of selectedFiles) {
+      const formData = new FormData();
+      formData.append('file', file);
 
-    const uploadArray = filesArray.map((file) => {
-      return {
-        path: file.name,
-        content: file
-      };                  
-    });
+      const pinataMetadata = JSON.stringify({
+        name: 'File name',
+      });
+      formData.append('pinataMetadata', pinataMetadata);
 
-    const response = await Moralis.EvmApi.ipfs.uploadFolder({
-      abi: uploadArray,
-    });
+      const pinataOptions = JSON.stringify({
+        cidVersion: 0,
+      });
+      formData.append('pinataOptions', pinataOptions);
 
-    console.log('Uploaded Links:', response.result);
-
-    const fileNames = filesArray.map(file => file.name);
-    const contentIDs = response.result.map(item => item.hash);
-    const contentIDsBytes = contentIDs.map(id => ethers.utils.toUtf8Bytes(id));
-
-    // Convert the comma-separated string of candidate IDs to an array of numbers
-    let candidateIdsArray = candidateIds.split(',').map(id => id.trim()).map(Number);
-    
       try {
-        const contract = await GetEthereumContract(); // Assuming GetEthereumContract returns the contract instance
-        const transaction = await contract.addDocuments(fileNames, contentIDsBytes, candidateIdsArray).send({ from: address });
-        await transaction.wait();
-        console.log('Documents added to the blockchain!');
+        const res = await axios.post(
+          'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          formData,
+          {
+            maxBodyLength: 'Infinity',
+            headers: {
+              'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+              Authorization: `Bearer ${JWT}`,
+            },
+          }
+        );
+        console.log(`Response for file ${file.name}:`, res.data);
       } catch (error) {
-        console.error('Error adding documents:', error);
-      }    
+        console.log(`Error for file ${file.name}:`, error);
+      }
+    }
+
+    // Clear the selected files after uploading all files
+    setSelectedFiles([]);
   };
 
   return (
     <div>
-      <h1>Upload Files to IPFS</h1>
-      <input type="text" value={candidateIds} onChange={handleCandidateIdsChange} placeholder="Candidate IDs (comma-separated)"  />
-      <input type="file" onChange={handleFileChange} multiple />
-      <button onClick={uploadFiles}>Upload</button>
+      <input
+        type="file"
+        id="fileInput"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        multiple
+      />
+      <button onClick={handleChooseFilesClick}>Choose Files</button>
+      <button onClick={handleUploadClick} disabled={selectedFiles.length === 0}>
+        Upload Files
+      </button>
     </div>
   );
-}
+};
 
-export default UploadToIpfs;
+export default UploadToIPFS;
