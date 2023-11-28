@@ -1,0 +1,6 @@
+.bannerBg{
+    background-image: url("../../../assets/destinationPage//banner/banner.png");
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat; 
+}

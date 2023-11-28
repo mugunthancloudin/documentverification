@@ -6,6 +6,7 @@ import LandingPage from "./pages/landingPage";
 // import VerificationHomePage from "./components/pages/verificationHomePage";
 // import VerificationSubmitPage from "./components/pages/verificationSubmitPage";
 import UploadToIpfs from "./uploadFile";
+import DestinationPage from "./pages/destinationPage";
 
 
 
@@ -23,7 +24,8 @@ function App() {
       </BrowserRouter> */}
       {/* <w3m-button/> 
       <UploadToIpfs/> */}
-      <LandingPage/>
+      {/* <LandingPage/> */}
+      <DestinationPage/>
       
 
     </>

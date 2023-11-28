@@ -1,0 +1,26 @@
+.stakeHoldersBg {
+    background-image: url("../../../assets/destinationPage/stackHolders/stackBg.png");
+    width: 100%;
+    height: 50px; /* Set the height to your desired value */
+    background-size: contain; /* or contain, based on your preference */
+    background-repeat: no-repeat;
+    background-position: center;
+    color: rgb(3, 75, 190);
+    margin-top: 2%;
+    font-weight: bolder;
+}
+
+
+.stackButton{
+    background-color: rgb(3,75,190);
+    border-radius: 8px;
+    padding: 3% 15%;
+    color: white;
+    font-weight: 500;
+}
+
+.img-container {
+    width: 100px;
+    height: 150px;
+  }
+  
