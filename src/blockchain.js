@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 
 const { ethereum } = window;
-const contractAddress = "0x7bfa1898152cdce9d601f3029e69b23011b4210d";
+const contractAddress = "0xAb00Bf924CB29Fa9f566c1032FAF46a915be791B";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -194,23 +194,23 @@ export default function Blockchain() {
     }
   };
 
-  const getCandidatesByCompany = async (companyId) => {
-    try {
-      const contract = await GetEthereumContract();
-      const result = await contract.getCandidatesByCompany(companyId);
-      console.log(result);
-    } catch(error) {
-      console.error("Error fetching candidates:", error);
-    }
-  };
+  // const getCandidatesByCompany = async (companyId) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const result = await contract.getCandidatesByCompany(companyId);
+  //     console.log(result);
+  //   } catch(error) {
+  //     console.error("Error fetching candidates:", error);
+  //   }
+  // };
 
-  const getDocumentsByCandidate = async (companyId) => {
-    try {
-      const contract = await GetEthereumContract();
-      const result = await contract.getDocumentsByCandidate(companyId);
-      console.log(result);
-    } catch(error) {
-      console.error("Error fetching candidates:", error);
-    }
-  }
+  // const getDocumentsByCandidate = async (companyId) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const result = await contract.getDocumentsByCandidate(companyId);
+  //     console.log(result);
+  //   } catch(error) {
+  //     console.error("Error fetching candidates:", error);
+  //   }
+  // }
 }
