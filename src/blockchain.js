@@ -3,9 +3,11 @@ import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { async } from "q";
+import Swal from 'sweetalert2';
+
 
 const { ethereum } = window;
-const contractAddress = "0x5B142DD894CB0edA3345379356cd579DF854a8E6";
+const contractAddress = "0x465A2464F8A1617811F38d7b169BcD0198280b1D";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -13,7 +15,8 @@ const providerUrl =
   "https://flashy-rough-snowflake.matic-testnet.quiknode.pro/ee0480f322e2f011a467e1989a5689b567834c70/";
 
 export default function Blockchain() {
-
+  let success = "success";
+  let info = "info";
   const { address,isConnected } = useAccount();
 
   const GetEthereumContract = async () => {
@@ -36,6 +39,8 @@ export default function Blockchain() {
       const contract = await GetEthereumContract();
       const transaction = await contract.setMaxVerifiers(newMaxVerifiers);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Max Verifiers set to ${newMaxVerifiers}`);
     } catch (error) {
       console.error("Error setting max verifiers:", error);
@@ -48,9 +53,23 @@ export default function Blockchain() {
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data); 
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Verifiers added successfully`);
     } catch (error) {
-      console.error("Error adding verifiers:", error);
+      // console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
     }
   };
   
@@ -61,9 +80,23 @@ export default function Blockchain() {
       const contract = await GetEthereumContract();
       const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Verifiers replaced successfully`)  ;
     } catch (error) {
-      console.error("Error replacing verifiers:", error);
+      // console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
     }
   };
   const removeVerifiers = async (oldVerifier) => {
@@ -73,9 +106,23 @@ export default function Blockchain() {
       const contract = await GetEthereumContract();
       const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Verifiers replaced successfully`)  ;
     } catch (error) {
-      console.error("Error replacing verifiers:", error);
+      // console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
     }
   };
 
@@ -92,21 +139,49 @@ console.log(data);
           [data.licenceNumber],
           [data.email]);
         await transaction.wait();
+        let hashValue=await transaction.hash
+        alert_(success,hashValue)
         console.log('Companies added successfully');
     } catch (error) {
-        console.error('Error adding companies:', error);
+      console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
     }
 };
 
   const removeCompanies = async (ids) => {
     try {
+      console.log(ids);
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCompanies(ids);
+      const transaction = await contract.removeCompanies([ids]);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Companies removed successfully`);
     } catch (error) {
-      console.error("Error removing companies:", error);
-    }
+      console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }    }
   };
   
   const addCandidates = async (addresses, names, locations, emails, phoneNumbers) => {
@@ -114,10 +189,23 @@ console.log(data);
         const contract = await GetEthereumContract();
         const transaction = await contract.addCandidates(addresses, names, locations, emails, phoneNumbers);
         await transaction.wait();
+        let hashValue=await transaction.hash
+        alert_(success,hashValue)
         console.log('Candidates added successfully');
     } catch (error) {
-        console.error('Error adding candidates:', error);
-    }
+      console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }    }
 };
 
   const editCandidate = async (id, name, location, email, phoneNumber) => {
@@ -125,10 +213,23 @@ console.log(data);
       const contract = await GetEthereumContract();
       const transaction = await contract.editCandidate(id, name, location, email, phoneNumber);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Candidate with ID ${id} edited successfully`);
   } catch (error) {
-      console.error(`Error editing candidate with ID ${id}:`, error);
-  }
+    console.log(error);
+    const errorMessage = error.message;
+
+    const errorRe = /execution reverted: (.*?)"/;
+    const errorMatch = errorRe.exec(errorMessage);
+
+    if (errorMatch) {
+      const error = errorMatch[1];
+      let err = error.toString();
+      alert_(info, err);
+    } else {
+      console.error(errorMessage);
+    }  }
 };
 
   const editCandidateCurrentCompany = async (id, newCurrentCompany) => {
@@ -136,10 +237,22 @@ console.log(data);
       const contract = await GetEthereumContract();
       const transaction = await contract.editCandidateCurrentCompany(id, newCurrentCompany);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Current company of candidate with ID ${id} edited successfully`);
   } catch (error) {
-      console.error(`Error editing current company of candidate with ID ${id}:`, error);
-  }
+    console.log(error);
+    const errorMessage = error.message;
+    const errorRe = /execution reverted: (.*?)"/;
+    const errorMatch = errorRe.exec(errorMessage);
+
+    if (errorMatch) {
+      const error = errorMatch[1];
+      let err = error.toString();
+      alert_(info, err);
+    } else {
+      console.error(errorMessage);
+    }  }
 };
 
   const addDocuments = async (names, cids, candidateIds, typesOfDocument, expirationDates) => {
@@ -147,10 +260,23 @@ console.log(data);
       const contract = await GetEthereumContract();
       const transaction = await contract.addDocuments(names, cids, candidateIds, typesOfDocument, expirationDates);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log('Documents added successfully');
   } catch (error) {
-      console.error('Error adding documents:', error);
-  }
+    console.log(error);
+    const errorMessage = error.message;
+
+    const errorRe = /execution reverted: (.*?)"/;
+    const errorMatch = errorRe.exec(errorMessage);
+
+    if (errorMatch) {
+      const error = errorMatch[1];
+      let err = error.toString();
+      alert_(info, err);
+    } else {
+      console.error(errorMessage);
+    }  }
 };
 
   const removeCandidates = async (ids) => {
@@ -158,10 +284,23 @@ console.log(data);
       const contract = await GetEthereumContract();
       const transaction = await contract.removeCandidates(ids);
       await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
       console.log(`Candidates removed successfully`);
     } catch (error) {
-      console.error("Error removing candidates:", error);
-    }
+      console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }    }
   };
 
   const verifyDocuments = async (documentIds) => {
@@ -183,11 +322,24 @@ console.log(data);
         const isCancelled = true;
         const transaction = await contract.verifyDocuments(documentIds, isCancelled);
         await transaction.wait();
+        let hashValue=await transaction.hash
+        alert_(success,hashValue)
         console.log('Documents verified successfully');
         return await getAndCategorizeAllDocuments();
     } catch (error) {
-        console.error('Error verifying documents:', error);
-    }
+      console.log(error);
+      const errorMessage = error.message;
+  
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+  
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }    }
   };
 
   const getAndCategorizeAllDocuments = async () => {
@@ -311,14 +463,23 @@ const isOwner = async (address) => {
     console.error("Error fetching owner:", error);
   }
 };
-
+const alert_ = (indication, hash) => {
+  Swal.fire({
+    position: "center",
+    icon: indication,
+    title: hash,
+    showConfirmButton: true,
+    focusCancel: false,
+  });
+};
 return{
   addVerifiers,
   isOwner,
   replaceVerifiers,
   removeVerifiers,
   addCompanies,
-  removeCompanies
+  removeCompanies,
+  setMaxVerifiers
 }
 
 }
