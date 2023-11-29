@@ -145,6 +145,7 @@ export default function Blockchain() {
         const transaction = await contract.verifyDocuments(documentIds, isCancelled);
         await transaction.wait();
         console.log('Documents verified successfully');
+        return await getAndCategorizeAllDocuments();
     } catch (error) {
         console.error('Error verifying documents:', error);
     }
@@ -175,14 +176,18 @@ export default function Blockchain() {
         }
       }
   
-      console.log('All Documents:', allDocuments);
-      console.log('Verified Documents:', verifiedDocuments);
-      console.log('Unverified Documents:', unverifiedDocuments);
-      console.log('Cancelled Documents:', cancelledDocuments);
+      return {
+        allDocuments,
+        verifiedDocuments,
+        unverifiedDocuments,
+        cancelledDocuments,
+      };
     } catch (error) {
       console.error('Error in categorize documents', error);
+      throw error; // Propagate the error if needed
     }
   };
+  
 
   // Function to get candidate details by ID
   const getCandidate = async () => {
