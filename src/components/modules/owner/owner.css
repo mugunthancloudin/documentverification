@@ -1,0 +1,9 @@
+.ownerBg{
+    background-image: url("../../../assets/destinationPage/home/admin.jpg");
+    background-size: cover;
+    width: 100%;
+}
+
+.ownerH1{
+    padding-top: 20%;
+}
