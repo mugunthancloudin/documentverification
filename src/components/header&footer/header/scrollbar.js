@@ -9,8 +9,8 @@ import { useAccount } from "wagmi";
 
 export default function Scrollbar() {
   const { address, isConnected } = useAccount();
-  console.log(address);
-  console.log(isConnected);
+  // console.log(address);
+  // console.log(isConnected);
 
   // useEffect(() => {
   //   const fetchData = async () => {

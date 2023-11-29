@@ -225,11 +225,19 @@ const isOwner = async (address) => {
     // console.log(contract);
     const result = await contract.getOwner();
     console.log(result); 
+    if (address==result){
+      return true;
+    }
+    else{
+      return false;
+    }
   } catch (error) {
     console.error("Error fetching owner:", error);
   }
 };
 
-
+return{
+  isOwner
+}
 
 }

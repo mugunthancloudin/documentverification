@@ -11,7 +11,7 @@ export default function OwnerHome() {
     async function fetchData() {
       try {
         if (isConnected) {
-          await blockchain.isConnected();
+          // await blockchain.isConnected();
           console.log("hi");
           let isowner = await blockchain.isOwner(address);
           console.log("muf");
