@@ -2,50 +2,30 @@ import logo from "./logo.svg";
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import LandingPage from "./pages/landingPage";
-// import { BrowserRouter, Routes,Route } from "react-router-dom";
+import { BrowserRouter, Routes,Route } from "react-router-dom";
+import DestinationPage from "./pages/destinationPage";
+import Owner from "./pages/owner";
+import Verifier from "./pages/verifier";
+import Company from "./pages/company";
+import Candidate from "./pages/candidate";
 // import VerificationHomePage from "./components/pages/verificationHomePage";
 // import VerificationSubmitPage from "./components/pages/verificationSubmitPage";
-import UploadToIpfs from "./uploadFile";
-import DestinationPage from "./pages/destinationPage";
-
-
 
 function App() {
   return (
     <>
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<VerificationHomePage/>} />
-          <Route
-            path="/documentVerification"
-            element={<VerificationSubmitPage />}
-          />
-        </Routes>
-      </BrowserRouter> */}
-      {/* <w3m-button/> 
-      <UploadToIpfs/> */}
-      {/* <LandingPage/> */}
-      <DestinationPage/>
-      
+          <Route path="/" element={<DestinationPage/>} />
+          <Route path="/owner" element={<Owner />}/>
+          <Route path="/verifier" element={<Verifier />}/>
+          <Route path="/company" element={<Company />}/>
+          <Route path="/individual" element={<Candidate/>}/>
 
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
 
 export default App;
-
-// import React from "react";
-// import Blockchain from "./blockchain"; // Import the Blockchain component
-// import UploadToIpfs from "./uploadFile";
-
-// export default function ConnectButton() {
-  
-//   return (
-//     <div>
-//       <w3m-button/>
-//       <h1>Blockchain Functions</h1>
-//       <Blockchain />
-//       <UploadToIpfs/>
-//     </div>
-//   );
-// }
