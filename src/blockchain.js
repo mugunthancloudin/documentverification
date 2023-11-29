@@ -52,7 +52,7 @@ export default function Blockchain() {
       console.error("Error adding verifiers:", error);
     }
   };
-  
+
   const replaceVerifiers = async (oldVerifiers, newVerifiers) => {
     try {
       const contract = await GetEthereumContract();
@@ -141,16 +141,55 @@ export default function Blockchain() {
     }
   };
 
-  const verifyDocuments = async (candidateIds, documentIds, isCancelled) => {
+  const verifyDocuments = async (documentIds, isCancelled) => {
     try {
         const contract = await GetEthereumContract();
-        const transaction = await contract.verifyDocuments(candidateIds, documentIds, isCancelled);
+        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
         await transaction.wait();
         console.log('Documents verified successfully');
+        return await getAndCategorizeAllDocuments();
     } catch (error) {
         console.error('Error verifying documents:', error);
     }
   };
+
+  const getAndCategorizeAllDocuments = async () => {
+    try {
+      const contract = await GetEthereumContract();
+  
+      const allDocuments = [];
+      const verifiedDocuments = [];
+      const unverifiedDocuments = [];
+      const cancelledDocuments = [];
+  
+      const documentCount = await contract.documents.length();
+  
+      for (let i = 1; i <= documentCount; i++) {
+        const document = await contract.documents(i);
+  
+        allDocuments.push(document);
+  
+        if (document.isVerified) {
+          verifiedDocuments.push(document);
+        } else if (document.isCancelled) {
+          cancelledDocuments.push(document);
+        } else {
+          unverifiedDocuments.push(document);
+        }
+      }
+  
+      return {
+        allDocuments,
+        verifiedDocuments,
+        unverifiedDocuments,
+        cancelledDocuments,
+      };
+    } catch (error) {
+      console.error('Error in categorize documents', error);
+      throw error; // Propagate the error if needed
+    }
+  };
+  
 
   // Function to get candidate details by ID
   const getCandidate = async (getCandidateId) => {
@@ -241,3 +280,4 @@ return{
 }
 
 }
+ 
