@@ -231,7 +231,7 @@ export default function OwnerPrivilages() {
               >
                 <div className="form-group row mt-2">
                   <div className="col-lg-6 text-center">
-                    <label>Owner Address to Remove:</label>
+                    <label>Verifier Address to Remove:</label>
                   </div>
                   <div className="col-lg-6">
                     <input
@@ -317,9 +317,7 @@ export default function OwnerPrivilages() {
               >
                 <div className="form-group row">
                   <div className="col-lg-6">
-                    <div className="row mt-2 text-center mb-2 fw-bold">
-                      <h5>Personel Details</h5>
-                    </div>
+                    
                     <div className="row mt-2">
                       <div className="col-lg-6">
                         <label>Name:</label>
