@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useAccount } from "wagmi";
 import Blockchain from "../../../blockchain";
 import OwnerPrivilages from "./ownerPrivilages";
+import "./owner.css";
 
 export default function OwnerHome() {
   const { address, isConnected } = useAccount();
@@ -25,13 +26,13 @@ export default function OwnerHome() {
   }, [isConnected]);
 
   return (
-<>
-      <div className="container-fluid homeBg">
+    <>
+      <div className="container-fluid ownerBg">
         <div className="container">
           <div className="row ">
-          <div className="col-lg-6 ">&nbsp;</div>
-            <div className="col-lg-6 text-end text-white pe-5">
-              <h1 className="homeH1 fw-bold">DOC-VERIFY</h1>
+            <div className="col-lg-6 ">&nbsp;</div>
+            <div className="col-lg-6 text-end pe-5">
+              <h1 className=" fw-bold ownerH1">DOC-VERIFY</h1>
               <p className="fw-bold">
                 Tamper-proof Document Issuance & Verification System <br></br>
                 for Issuing Authorities to issue Verifiable Documents to{" "}
@@ -42,8 +43,10 @@ export default function OwnerHome() {
               <w3m-button />
             </div>
           </div>
-
-          <OwnerPrivilages/>
+          <div className="row mt-5">
+          <OwnerPrivilages />
+          </div>
+          
         </div>
       </div>
     </>

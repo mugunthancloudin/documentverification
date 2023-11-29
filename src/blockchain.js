@@ -44,8 +44,9 @@ export default function Blockchain() {
 
   const addVerifiers = async (verifiers) => {
     try {
+      let data=[verifiers]
       const contract = await GetEthereumContract();
-      const transaction = await contract.addVerifiers(verifiers); 
+      const transaction = await contract.addVerifiers(data); 
       await transaction.wait();
       console.log(`Verifiers added successfully`);
     } catch (error) {
@@ -53,8 +54,22 @@ export default function Blockchain() {
     }
   };
   
-  const replaceVerifiers = async (oldVerifiers, newVerifiers) => {
+  const replaceVerifiers = async (oldVerifier, newVerifier) => {
     try {
+      let oldVerifiers=[oldVerifier]
+      let newVerifiers=[newVerifier]
+      const contract = await GetEthereumContract();
+      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
+      await transaction.wait();
+      console.log(`Verifiers replaced successfully`)  ;
+    } catch (error) {
+      console.error("Error replacing verifiers:", error);
+    }
+  };
+  const removeVerifiers = async (oldVerifier) => {
+    try {
+      let oldVerifiers=[oldVerifier]
+      let newVerifiers=["0x0000000000000000000000000000000000000000"]
       const contract = await GetEthereumContract();
       const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
@@ -64,10 +79,19 @@ export default function Blockchain() {
     }
   };
 
-  const addCompanies = async (addresses, names, locations, phoneNumbers, licenseNumbers, emails) => {
+  const addCompanies = async (data) => {
     try {
+
+
         const contract = await GetEthereumContract();
-        const transaction = await contract.addCompanies(addresses, names, locations, phoneNumbers, licenseNumbers, emails);
+        const transaction = await contract.addCompanies(
+          
+          data.walletAddress,
+          data.name,
+          data.location,
+          data.mobileNumber,
+          data.licenceNumber,
+          data.email);
         await transaction.wait();
         console.log('Companies added successfully');
     } catch (error) {
@@ -230,6 +254,12 @@ const isOwner = async (address) => {
   }
 };
 
-
+return{
+  addVerifiers,
+  isOwner,
+  replaceVerifiers,
+  removeVerifiers,
+  addCompanies
+}
 
 }
