@@ -42,7 +42,7 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (verifiers) => {
+  const addVerifiers = async (data) => {
     try {
       let data=[verifiers]
       const contract = await GetEthereumContract();
@@ -164,9 +164,23 @@ console.log(data);
     }
   };
 
-  const verifyDocuments = async (documentIds, isCancelled) => {
+  const verifyDocuments = async (documentIds) => {
     try {
         const contract = await GetEthereumContract();
+        const isCancelled = false;
+        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
+        await transaction.wait();
+        console.log('Documents verified successfully');
+        return await getAndCategorizeAllDocuments();
+    } catch (error) {
+        console.error('Error verifying documents:', error);
+    }
+  };
+
+  const cancelDocuments = async (documentIds, isCancelled) => {
+    try {
+        const contract = await GetEthereumContract();
+        const isCancelled = true;
         const transaction = await contract.verifyDocuments(documentIds, isCancelled);
         await transaction.wait();
         console.log('Documents verified successfully');
