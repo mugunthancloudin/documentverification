@@ -3,12 +3,22 @@ import Container from "react-bootstrap/Container";
 import { Link } from "react-scroll";
 import brandLogo from "../../../assets/header/verificationLogo.jpg";
 
-import { Navbar, Nav, Button, NavLink } from "react-bootstrap";
-// import * as blockchain from "../../../blockchain";
-
+import { Navbar, Nav, Button,NavLink } from "react-bootstrap";
+// import { truncate, useGlobalState } from "../../../store";
+// import { useAccount, useBalance, useNetwork } from "wagmi";
+// import "reactjs-popup/dist/index.css";
+// import * as blockchain from "../../../services/Blockchain";
+// import { getGlobalState, setGlobalState } from "../../../store";
+// import {
+//   useConnectModal,
+//   useAccountModal,
+//   useChainModal,
+// } from "@rainbow-me/rainbowkit";
 
 export default function Scrollbar() {
-  // const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
+  // const [injectAmount, setInjectAmount] = useState(0);
+  // const [balance, setBalance] = useState();
   // const [ownerAddress, setOwnerAddress] = useState("");
   // const { chain } = useNetwork();
 

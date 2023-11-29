@@ -1,92 +1,110 @@
-    // SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.20;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
 
-    import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-    contract Verification is Ownable {
-        address[] public verifiers;
-        uint256 public maxVerifiers = 10;
-        uint256 public numCompanies;
-        uint256 public numDocuments;
+contract Verification is Ownable {
+    address[] public verifiers;
+    uint256 public maxVerifiers = 10;
 
-        event VerifierAdded(address indexed verifier);
-        event VerifierRemoved(address indexed verifier);
-        event VerifierReplaced(address indexed oldVerifier, address indexed newVerifier);
-        event CompanyAdded(uint256 indexed id, address indexed companyAddress, string name);
-        event CompanyRemoved(uint256 indexed id);
-        event CandidateAdded(uint256 indexed id, string name);
-        event CandidateRemoved(uint256 indexed id);
-        event DocumentAdded(uint256 indexed id, string name, bytes cid, uint256 companyId, uint256 candidateId);
-        event DocumentRemoved(uint256 documentId, uint256 candidateId, uint256 companyId);
-        event DocumentVerified(uint256 indexed id);
+    event VerifierAdded(address indexed verifier);
+    event VerifierRemoved(address indexed verifier);
+    event VerifierReplaced(address indexed oldVerifier, address indexed newVerifier);
+    event CompanyAdded(uint256 indexed id, address indexed companyAddress, string name, string location, string phoneNumber, string licenseNumber, string email);
+    event CompanyRemoved(uint256 indexed id);
+    event CandidateAdded(uint256 indexed id, string name, string location, string email, string phoneNumber);
+    event CandidateRemoved(uint256 indexed id);
+    event CandidateEdited(uint256 indexed id, string name, string location, string email, string phoneNumber);
+    event CandidateCurrentCompanyEdited(uint256 indexed id, address newCurrentCompany);
+    event DocumentAdded(uint256 indexed id, string name, string cid, uint256 candidateId, string typeOfDocument, string expirationDate);
+    event DocumentRemoved(uint256 documentId, uint256 candidateId);
+    event DocumentVerified(uint256 indexed id);
+    event DocumentCancelled(uint256 indexed id);
 
+    struct Company {
+        uint256 date;
+        address address_;
+        string name;
+        uint256 Id;
+        uint256[] candidateIds;
+        string location;
+        string phoneNumber;
+        string licenseNumber;
+        string email;
+    }
 
-        struct Company {
-            address address_;
-            string name;
-            uint256 Id;
-        }
+    struct Candidate {
+        uint256 date;
+        address address_;
+        address currentCompany;
+        string name;
+        uint256[] documentIds;
+        uint256 Id;
+        string location;
+        string email;
+        string phoneNumber;
+    }
 
-        struct Candidate {
-            string name;
-            uint256 Id;
-        }
+    struct Document {
+        uint256 date;
+        string name;
+        uint id;     
+        string cid;
+        string typeOfDocument;
+        string expirationDate;
+        bool isVerified;
+        bool isCancelled;
+        uint256 candidateId;
+    }
 
-        struct Document {
-            string name;
-            bytes cid;
-            bool isVerified;
-        }
+    mapping(address => uint256) public companyAddress;
+    mapping(address => uint256) public candidateAddress;
+    Company[] public companies;
+    Candidate[] public candidates;
+    Document[] public documents;
 
-        mapping(uint256 => Company) public companies;
-        mapping(address => Company) public companyAddress;
-        mapping(uint256 => Candidate) public candidates;
-        mapping(uint256 => Document) public documents;
-        mapping(uint256 => mapping(uint256 => uint256)) public companyCandidateDocuments;   
+    function isCandidate() internal view returns (bool) {
+        return candidateAddress[msg.sender] != 0;
+    }
 
-        function onlyCompany(address sender) public  view returns (bool) {
-        bool isCompany = false;
-        for (uint i = 1; i <= numCompanies; i++) {
-            if (companies[i].address_ == sender) {
-                isCompany = true;
-                break;  
+    function isCompany() internal view returns (bool) {
+        return companyAddress[msg.sender] != 0;
+    }
+
+    function isVerifier() internal view returns (bool) {
+        return isVerifier(msg.sender);
+    }
+
+    function isVerifier(address _address) internal view returns (bool) {
+        for (uint256 i = 0; i < verifiers.length; i++) {
+            if (verifiers[i] == _address) {
+                return true;
             }
         }
-        return isCompany;
-        }
+        return false;
+    }
 
-        function onlyVerifier(address sender) public  view returns (bool) {
-        bool isVerifier = false;
-        for (uint i = 0; i < verifiers.length; i++) {
-            if (verifiers[i] == sender) {
-                isVerifier = true;
-                break;
-            }
-        }
-        return isVerifier;
-        }
+    function setMaxVerifiers(uint256 _maxVerifiers) external onlyOwner {
+        require(_maxVerifiers > 0, "Maximum verifiers should be greater than 0");
+        maxVerifiers = _maxVerifiers;
+    }
 
-        function setMaxVerifiers(uint256 _maxVerifiers) public onlyOwner {
-            require(_maxVerifiers > 0, "Maximum verifiers should be greater than 0");
-            maxVerifiers = _maxVerifiers;
-        }
-
-        function addVerifiers(address[] memory _verifiers) public onlyOwner {
+    function addVerifiers(address[] memory _verifiers) external onlyOwner {
         require(_verifiers.length > 0, "No verifiers to add");
+
+        require(verifiers.length + _verifiers.length <= maxVerifiers, "Exceeds maximum number of verifiers");
 
         for (uint256 i = 0; i < _verifiers.length; i++) {
             address _verifier = _verifiers[i];
             require(_verifier != address(0), "Invalid address");
 
-            require(verifiers.length < maxVerifiers, "Maximum number of verifiers reached");
             verifiers.push(_verifier);
-
             emit VerifierAdded(_verifier);
-            }
         }
+    }
 
-        function replaceVerifiers(address[] memory _oldVerifiers, address[] memory _newVerifiers) public onlyOwner {
-        
+    function replaceVerifiers(address[] memory _oldVerifiers, address[] memory _newVerifiers) external onlyOwner {
+        require(_oldVerifiers.length == _newVerifiers.length, "Mismatched input lengths");
 
         for (uint256 i = 0; i < _oldVerifiers.length; i++) {
             address _oldVerifier = _oldVerifiers[i];
@@ -106,7 +124,6 @@
                     }
                 }
             } else {
-                require(_oldVerifiers.length == _newVerifiers.length, "Mismatched input lengths");
                 for (uint256 j = 0; j < verifiers.length; j++) {
                     if (verifiers[j] == _oldVerifier) {
                         verifiers[j] = _newVerifier;
@@ -119,168 +136,321 @@
         }
     }
 
-        function addCompanies(uint256[] memory _ids, address[] memory _addresses, string[] memory _names) public onlyOwner {
-        require(_ids.length == _addresses.length && _ids.length == _names.length, "Mismatched input lengths");
+    function addCompanies(address[] memory _addresses, string[] memory _names, string[] memory _locations, string[] memory _phoneNumbers, string[] memory _licenseNumbers, string[] memory _emails) external {
+    require(isVerifier() || msg.sender == owner(), "Only verifier or owner can call");
+    require(
+        _addresses.length == _names.length &&
+        _addresses.length == _locations.length &&
+        _addresses.length == _phoneNumbers.length &&
+        _addresses.length == _licenseNumbers.length &&
+        _addresses.length == _emails.length,
+        "Mismatched input lengths"
+    );
 
-        for (uint256 i = 0; i < _ids.length; i++) {
-            uint256 _id = _ids[i];
-            address _address = _addresses[i];
-            string memory _name = _names[i];
+    for (uint256 i = 0; i < _addresses.length; i++) {
+        address _address = _addresses[i];
+        string memory _name = _names[i];
+        string memory _location = _locations[i];
+        string memory _phoneNumber = _phoneNumbers[i];
+        string memory _licenseNumber = _licenseNumbers[i];
+        string memory _email = _emails[i];
 
-            {
-                // Add new company data
-                companies[_id] = Company({
-                    address_: _address,
-                    name: _name,
-                    Id: _id
-                });
-                // New company, increment count
-                numCompanies++;
-            }
+        uint256 _id = companies.length + 1; // Increment the counter and use it as the new ID
 
-            emit CompanyAdded(_id, _address, _name);
-        }
+        companies.push(Company({
+            date: block.timestamp,
+            address_: _address,
+            name: _name,
+            Id: _id,
+            location: _location,
+            phoneNumber: _phoneNumber,
+            licenseNumber: _licenseNumber,
+            email: _email,
+            candidateIds: new uint256[](0)  // Initialize an empty array for candidate IDs
+        }));
+
+        companyAddress[_address] = _id;
+
+        emit CompanyAdded(_id, _address, _name, _location, _phoneNumber, _licenseNumber, _email);
     }
-        function removeCompanies(uint256[] memory _ids) public onlyOwner {
+}
+
+    function removeCompanies(uint256[] memory _ids) external {
+        require(isVerifier() || msg.sender == owner(), "Only verifier or owner can call");
         require(_ids.length > 0, "No company IDs provided");
 
         for (uint256 i = 0; i < _ids.length; i++) {
             uint256 _id = _ids[i];
-            
-            require(companies[_id].Id != 0, "Company with given ID does not exist");
 
-            delete companies[_id];
-            numCompanies--;
+            require(_id <= companies.length, "Invalid company ID");
+            uint256 arrayIndex = _id - 1;
 
             emit CompanyRemoved(_id);
-        }
-    }
-        function addCandidates(uint256[] memory _ids, string[] memory _names) public {
-
-        require(onlyVerifier(msg.sender), "Sender is not a registered and verified company");
-        require(_ids.length == _names.length, "Mismatched input lengths");
-
-        for (uint256 i = 0; i < _ids.length; i++) {
-            uint256 _id = _ids[i];
-            string memory _name = _names[i];
-
-            {
-                // Add new candidate data
-                candidates[_id] = Candidate({
-                    name: _name,
-                    Id: _id
-                });
-            }
-
-            emit CandidateAdded(_id, _name);
+            delete companies[arrayIndex];
         }
     }
 
-        function removeCandidates(uint256[] memory _ids) public {
+    function addCandidates(
+    address[] memory _addresses,
+    string[] memory _names,
+    string[] memory _locations,
+    string[] memory _emails,
+    string[] memory _phoneNumbers
+) external {
+    require(isCompany(), "Only company can call");
+    require(_addresses.length == _names.length, "Mismatched input lengths");
 
-        require(onlyVerifier(msg.sender), "Sender is not a registered and verified company");
-        require(_ids.length > 0, "No candidate IDs provided");
+    for (uint256 i = 0; i < _addresses.length; i++) {
+        address _address = _addresses[i];
+        string memory _name = _names[i];
+        string memory _location = _locations[i];
+        string memory _email = _emails[i];
+        string memory _phoneNumber = _phoneNumbers[i];
+
+        // Check if the name or address already exists
+        require(candidateAddress[_address] == 0, "Candidate with the given address already exists");
+
+        // Check if address and name are not zero
+        require(_address != address(0), "Address cannot be zero");
+        require(bytes(_name).length > 0, "Name cannot be empty");
+
+        uint256 _id = candidates.length + 1; // Increment the counter and use it as the new ID
+
+        candidates.push(Candidate({
+            date: block.timestamp,
+            address_: _address,
+            name: _name,
+            Id: _id,
+            location: _location,
+            email: _email,
+            phoneNumber: _phoneNumber,
+            currentCompany: msg.sender,
+            documentIds: new uint256[](0)  // Initialize an empty array for document IDs
+        }));
+
+        // Add the candidate ID to the company's candidateIds array
+        companies[companyAddress[msg.sender] - 1].candidateIds.push(_id);
+
+        candidateAddress[_address] = _id;
+
+        emit CandidateAdded(_id, _name, _location, _email, _phoneNumber);
+    }
+}
+
+    function editCandidate(
+        uint256 _id,
+        string memory _name,
+        string memory _location,
+        string memory _email,
+        string memory _phoneNumber
+    ) external {
+        require(isCompany(), "Only company can call");
+        require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
+        require(candidates[_id].currentCompany == msg.sender, "You do not have permission to edit this candidate");
+
+        candidates[_id].name = _name;
+        candidates[_id].location = _location;
+        candidates[_id].email = _email;
+        candidates[_id].phoneNumber = _phoneNumber;
+
+        emit CandidateEdited(_id, _name, _location, _email, _phoneNumber);
+    }
+
+    function removeCandidates(uint256[] memory _ids) external {
+        require(isVerifier() || isCompany(), "Only verifier or owner can call");
 
         for (uint256 i = 0; i < _ids.length; i++) {
             uint256 _id = _ids[i];
-            
+
             require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
-
-            delete candidates[_id];
+            uint256 arrayIndex = _id - 1;
 
             emit CandidateRemoved(_id);
+            delete candidates[arrayIndex];
         }
+    }
+
+    function editCandidateCurrentCompany(uint256 _id, address _newCurrentCompany) external {
+        require(isCompany(), "Only company can call");
+        require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
+
+        // If currentCompany is not set, any company can edit it
+        if (candidates[_id].currentCompany != address(0)) {
+            require(candidates[_id].currentCompany == msg.sender, "You do not have permission to edit currentCompany for this candidate");
+        }
+
+        candidates[_id].currentCompany = _newCurrentCompany;
+
+        emit CandidateCurrentCompanyEdited(_id, _newCurrentCompany);
     }
 
     function addDocuments(
-    string[] memory _names,
-    bytes[] memory _cids,
-    uint256[] memory _candidateIds
-) public {
-    require(onlyCompany(msg.sender), "Sender is not a registered and verified company");
+        string[] memory _names,
+        string[] memory _cids,
+        uint256[] memory _candidateIds,
+        string[] memory _typesOfDocument,
+        string[] memory _expirationDates
+    ) external {
+        require(isCompany(), "Only company can call");
+        require(
+            _names.length == _cids.length &&
+            _names.length == _candidateIds.length,
+            "Mismatched input lengths"
+        );
 
-    require(_names.length == _cids.length && _names.length == _candidateIds.length, "Mismatched input lengths");
+        for (uint256 i = 0; i < _names.length; i++) {
+            string memory _name = _names[i];
+            string memory _cid = _cids[i];
+            uint256 _candidateId = _candidateIds[i];
+            string memory _typeOfDocument = _typesOfDocument[i];
+            string memory _expirationDate = _expirationDates[i];
 
-    uint256 _companyId = getCompanyIdOfSender();  // Get the companyId of the sender
+            require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
 
-    for (uint256 i = 0; i < _names.length; i++) {
-        string memory _name = _names[i];
-        bytes memory _cid = _cids[i];
-        uint256 _candidateId = _candidateIds[i];
+            uint256 documentId = documents.length + 1; // Increment the counter and use it as the new ID
 
-        require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
+            documents.push(Document({
+                date: block.timestamp,
+                name: _name,
+                cid: _cid,
+                id: documentId,
+                typeOfDocument: _typeOfDocument,
+                expirationDate: _expirationDate,
+                isVerified: false,
+                isCancelled: false,
+                candidateId: _candidateId
+            }));
 
-        uint256 documentId = numDocuments + 1;
-        documents[documentId] = Document({
-            name: _name,
-            cid: _cid,
-            isVerified: false
-        });
+            // Add the document ID to the candidate's documentIds array
+            candidates[_candidateId].documentIds.push(documentId);
 
-        companyCandidateDocuments[_companyId][_candidateId] = documentId;
+            emit DocumentAdded(documentId, _name, _cid, _candidateId, _typeOfDocument, _expirationDate);
+        }
+    }
 
-        numDocuments++;
+    function removeDocuments(uint256[] memory _candidateIds, uint256[] memory _documentIds) external {
+        require(isCompany(), "Only company can call");
+        require(_candidateIds.length == _documentIds.length, "Mismatched input lengths");
 
-        emit DocumentAdded(documentId, _name, _cid, _companyId, _candidateId);
+        for (uint256 i = 0; i < _candidateIds.length; i++) {
+            uint256 _candidateId = _candidateIds[i];
+            uint256 _documentId = _documentIds[i];
+
+            require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
+
+            uint256 arrayIndex = _documentId - 1;
+
+            emit DocumentRemoved(_documentId, _candidateId);
+            delete candidates[_candidateId].documentIds[arrayIndex];
+        }
+    }
+
+    function verifyDocument(uint256 _documentId, bool _isCancelled) external {
+    require(isVerifier(), "Only verifier can call");
+    
+    require(_documentId <= documents.length, "Invalid document ID");
+    uint256 arrayIndex = _documentId - 1;
+
+    Document storage document = documents[arrayIndex];
+
+    // Check if the document exists
+    require(document.id != 0, "Document with given ID does not exist");
+    require(!document.isVerified && !document.isCancelled, "Document with given ID is already verified or cancelled");
+
+    if (_isCancelled) {
+        document.isCancelled = true;
+        emit DocumentCancelled(_documentId);
+    } else {
+        document.isVerified = true;
+        emit DocumentVerified(_documentId);
     }
 }
 
-function removeDocuments(uint256[] memory _candidateIds) public {
-    require(onlyCompany(msg.sender), "Sender is not a registered and verified company");
 
-    uint256 _companyId = getCompanyIdOfSender();  // Get the companyId of the sender
-
-    for (uint256 i = 0; i < _candidateIds.length; i++) {
-        uint256 _candidateId = _candidateIds[i];
-
-        require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
-
-        uint256 documentId = companyCandidateDocuments[_companyId][_candidateId];
-
-        require(documentId != 0, "No document found for the given candidate and company");
-
-        delete documents[documentId];
-        delete companyCandidateDocuments[_companyId][_candidateId];
-
-        emit DocumentRemoved(documentId, _candidateId, _companyId);
+    function getCompanyIdOfSender() public view returns (uint256) {
+        return companyAddress[msg.sender];
     }
+
+function getCandidate(uint256 _id) public view returns (string memory, uint256, string memory, string memory, string memory) {
+    require(_id <= candidates.length, "Invalid candidate ID");
+    uint256 arrayIndex = _id - 1;
+
+    Candidate storage candidate = candidates[arrayIndex];
+
+    // Check if the candidate exists
+    require(candidate.Id != 0, "Candidate with given ID does not exist");
+
+    return (
+        candidate.name,
+        candidate.Id,
+        candidate.location,
+        candidate.email,
+        candidate.phoneNumber
+    );
 }
 
-function getCompanyIdOfSender() public view returns (uint256) {
-    return companyAddress[msg.sender].Id;
+function getDocuments(uint256 _candidateId) external view returns (Document[] memory) {
+    require(_candidateId <= candidates.length, "Invalid candidate ID");
+    uint256 arrayIndex = _candidateId - 1;
+
+    Candidate storage candidate = candidates[arrayIndex];
+
+    // Check if the candidate exists
+    require(candidate.Id != 0, "Candidate with given ID does not exist");
+
+    uint256[] memory documentIds = candidate.documentIds;
+
+    // Fetch all documents associated with the candidate
+    Document[] memory result = new Document[](documentIds.length);
+
+    for (uint256 i = 0; i < documentIds.length; i++) {
+        result[i] = documents[documentIds[i]];
+    }
+
+    return result;
 }
 
-    function verifyDocuments(uint256[] memory _ids) public {
-        
-        require(onlyVerifier(msg.sender), "Sender is not a registered and verified company");
-        for (uint256 i = 0; i < _ids.length; i++) {
-            uint256 _id = _ids[i];
-            
-            require(documents[_id].isVerified == false, "Document with given ID is already verified");
-        
-            documents[_id].isVerified = true;
-            emit DocumentVerified(_id);
-        }
-    }
-            
-        function getCompany(uint256 _id) public view returns (address, string memory, uint256) {
-        Company memory company = companies[_id];
-        return (company.address_, company.name, company.Id);
-    }
-        function getCandidate(uint256 _id) public view returns (string memory, uint256) {
-        Candidate memory candidate = candidates[_id];
-        return (candidate.name, candidate.Id);
+function getDocumentsByCandidate(uint256 _candidateId) external view returns (Document[] memory) {
+    require(_candidateId <= candidates.length, "Invalid candidate ID");
+    uint256 arrayIndex = _candidateId - 1;
+
+    Candidate storage candidate = candidates[arrayIndex];
+
+    // Check if the candidate exists
+    require(candidate.Id != 0, "Candidate with given ID does not exist");
+
+    uint256[] memory documentIds = candidate.documentIds;
+    Document[] memory result = new Document[](documentIds.length);
+
+    // Fetch all documents associated with the candidate directly
+    for (uint256 i = 0; i < documentIds.length; i++) {
+        result[i] = documents[documentIds[i] - 1];
     }
 
-        function getDocument(uint256 _companyId, uint256 _candidateId) public view returns (uint256) {
-            return companyCandidateDocuments[_companyId][_candidateId];
-        }
+    return result;
+}
 
-        function getVerifiers() public view returns (address[] memory) {
-            return verifiers;
-        }
+function getCandidatesByCompany(uint256 _companyId) external view returns (Candidate[] memory) {
+    require(_companyId <= companies.length, "Invalid company ID");
+    uint256 arrayIndex = _companyId - 1;
 
-        function getOwner() public view returns (address) {
-        return owner();
+    uint256[] memory candidateIds = companies[arrayIndex].candidateIds;
+    Candidate[] memory result = new Candidate[](candidateIds.length);
+
+    // Fetch all candidates associated with the company directly
+    for (uint256 i = 0; i < candidateIds.length; i++) {
+        result[i] = candidates[candidateIds[i] - 1];
     }
-    }
+
+    return result;
+}
+
+function getVerifiers() public view returns (address[] memory) {
+    return verifiers;
+}
+
+function getOwner() public view returns (address) {
+    return owner();
+}
+
+}

@@ -23,6 +23,7 @@ function App() {
       </BrowserRouter> */}
       {/* <w3m-button/> 
       <UploadToIpfs/> */}
+      <UploadToIpfs/>
       <LandingPage/>
       
 
