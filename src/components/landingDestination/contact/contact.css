@@ -1,0 +1,53 @@
+.contactBg {
+  background-image: url("../../../assets/destinationPage/contact/contactBg.gif");
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center right;
+}
+
+.contactH1 {
+  margin-top: 3%;
+  color: rgb(3, 75, 190);
+  font-weight: 700;
+  background-image: url("../../../assets/destinationPage/stackHolders/stackBg.png");
+  width: 100%;
+  height: 50px; /* Set the height to your desired value */
+  background-size: contain; /* or contain, based on your preference */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.contact-img {
+  margin-top: 20px;
+  width: 50px;
+}
+
+.transparent-form {
+    background-color:  rgb(248,248,248,0); /* Adjust the alpha value for transparency */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.contactform {
+    background-color: transparent; /* Set the background of input fields and textarea to transparent */
+    border: none;
+    width: 100%;
+    border-bottom: 1px solid #ccc; /* Add a bottom border for a subtle separation */
+    margin-bottom: 15px;
+}
+
+/* Optional: Remove the default outline on focus */
+.contactform:focus {
+    outline: none;
+}
+
+.contactBtn{
+    background-color: rgb(3,75,190);
+    color: white;
+    border: none;
+    font-weight: 700;
+    padding: 2% 8%;
+    border-radius: 10px;
+    margin-top: 5%;
+}

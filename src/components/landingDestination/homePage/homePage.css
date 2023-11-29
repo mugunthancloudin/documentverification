@@ -1,0 +1,23 @@
+.homeBg{
+    background-image: url("../../../assets//destinationPage//home//docVerificationHome.gif");
+    width: 100%;
+    background-size:cover;
+    background-repeat: no-repeat; 
+}
+
+.homeH1{
+    margin-top: 35%;
+    font-weight: bolder;
+    font-size:80px;   
+}
+
+
+
+.homeIcons{
+    margin-top: 30%;
+    margin-left: 5%;
+}
+
+.homeIcon-img{
+   width: 60px;
+}
