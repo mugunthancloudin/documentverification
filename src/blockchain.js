@@ -82,16 +82,15 @@ export default function Blockchain() {
   const addCompanies = async (data) => {
     try {
 
-
+console.log(data);
         const contract = await GetEthereumContract();
         const transaction = await contract.addCompanies(
-          
-          data.walletAddress,
-          data.name,
-          data.location,
-          data.mobileNumber,
-          data.licenceNumber,
-          data.email);
+          [data.walletAddress],
+          [data.name],
+          [data.location],
+          [data.mobileNumber],
+          [data.licenceNumber],
+          [data.email]);
         await transaction.wait();
         console.log('Companies added successfully');
     } catch (error) {
@@ -304,7 +303,8 @@ return{
   isOwner,
   replaceVerifiers,
   removeVerifiers,
-  addCompanies
+  addCompanies,
+  removeCompanies
 }
 
 }

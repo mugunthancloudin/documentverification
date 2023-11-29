@@ -165,6 +165,7 @@ export default function OwnerPrivilages() {
   //5.Function Call On Remove Company Address
   const removeCompanyAddress = async (data) => {
     try {
+      console.log(data);
       const removedCompany = await blockchain.removeCompanies(
         data.companyAddressToRemove
       );
