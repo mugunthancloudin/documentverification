@@ -2,9 +2,10 @@ import abi from "./abis/src/contracts/Verification.sol/Verification.json";
 import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { async } from "q";
 
 const { ethereum } = window;
-const contractAddress = "0x8918c92c7b36f33e927d23e90a590d8564dd6919";
+const contractAddress = "0x5B142DD894CB0edA3345379356cd579DF854a8E6";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -12,21 +13,22 @@ const providerUrl =
   "https://flashy-rough-snowflake.matic-testnet.quiknode.pro/ee0480f322e2f011a467e1989a5689b567834c70/";
 
 export default function Blockchain() {
+
   const { address,isConnected } = useAccount();
 
   const GetEthereumContract = async () => {
-    if(isConnected)
-     {
+    // if(isConnected)
+    //  {
       //check whether device pc or mobile
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
       let contract = new ethers.Contract(contractAddress, contractAbi, signer);
       // console.log(contract);
       return contract;
-    } 
-    else {
-      console.log("wallet not connected");
-    }
+    // } 
+    // else {
+    //   console.log("wallet not connected");
+    // }
   };
 
   const setMaxVerifiers = async (newMaxVerifiers) => {
@@ -151,7 +153,7 @@ export default function Blockchain() {
   };
 
   // Function to get candidate details by ID
-  const getCandidate = async () => {
+  const getCandidate = async (getCandidateId) => {
     try {
       const contract = await GetEthereumContract();
       const result = await contract.getCandidate(getCandidateId);
@@ -162,7 +164,7 @@ export default function Blockchain() {
   };
 
   // Function to get company details by ID
-  const getCompany = async () => {
+  const getCompany = async (getCompanyId) => {
     try {
       const contract = await GetEthereumContract();
       const result = await contract.getCompany(getCompanyId);
@@ -215,5 +217,19 @@ const getDocumentsByCandidate = async (candidateId) => {
     console.error("Error fetching documents:", error);
   }
 };
+
+const isOwner = async (address) => {
+  console.log(address);
+  try {
+    const contract = await GetEthereumContract();
+    // console.log(contract);
+    const result = await contract.getOwner();
+    console.log(result); 
+  } catch (error) {
+    console.error("Error fetching owner:", error);
+  }
+};
+
+
 
 }

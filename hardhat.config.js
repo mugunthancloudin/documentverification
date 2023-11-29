@@ -1,4 +1,9 @@
-require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
+
+const { mnemonic } = require("./secrets.json");
+// const { ethers } = require("hardhat");
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -25,17 +30,13 @@ module.exports = {
       url: "https://rpc-mumbai.maticvigil.com",
       chainId: 80001,
       gasPrice: 20000000000, // Adjust the gasPrice as needed for your tests
-      accounts: [
-        `736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc`,
-      ]
+      accounts: { mnemonic: mnemonic },
     },
-    bsctestnet: {
+    testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: "auto",
-      accounts: [
-        `736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc`,
-      ],
+      accounts: { mnemonic: mnemonic },
     },
     sepolia: {
       url: "https://eth-sepolia.g.alchemy.com/v2/WwOzwGSBtyRSL2o0sFX4AFEGbyJ1tfXV",
@@ -43,17 +44,15 @@ module.exports = {
         `736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc`,
       ],
     },
-    bscmainnet: {
+    mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: [
-        `736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc`,
-      ],
+      accounts: { mnemonic: mnemonic },
     },
   },
   solidity: {
-    version: "0.8.20",
+    version: "0.8.21",
     settings: {
       optimizer: {
         enabled: true,
@@ -64,10 +63,9 @@ module.exports = {
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
     // apiKey: "G2PQQ9KTX12QTRZ5TMSNHZ4PKM4SGW7639",//bnb
-    apiKey: "7XBNM7I42PJW8NP8GDT1475CTC6BRBAXMZ",//polygon
-
+    // apiKey: "7XBNM7I42PJW8NP8GDT1475CTC6BRBAXMZ",//polygon
     // J6XX5W1D135S9Y9HQ5RNFCXSTZE4N5H1NJ
-    // apiKey: "J6XX5W1D135S9Y9HQ5RNFCXSTZE4N5H1NJ",
+    apiKey: "J6XX5W1D135S9Y9HQ5RNFCXSTZE4N5H1NJ",
   },
   paths: {
     sources: "./src/contracts",

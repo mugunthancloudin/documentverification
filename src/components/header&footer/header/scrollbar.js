@@ -76,11 +76,11 @@ export default function Scrollbar() {
             </Nav>
           </Navbar.Collapse>
 
-          <Navbar.Collapse className="justify-content-end">
+          {/* <Navbar.Collapse className="justify-content-end">
             <Nav className="me-2">
               <w3m-button />
             </Nav>
-          </Navbar.Collapse>
+          </Navbar.Collapse> */}
         </Container>
       </Navbar>
     </>
