@@ -71,12 +71,12 @@ export default function CompanyPrivilages() {
       alert_(info, "Cannot Upload Multiple files");
       return;
     }
-  
+
     try {
       const file = selectedFile[0];
       const fileFormData = new FormData();
       fileFormData.append("file", file);
-  
+
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         fileFormData,
@@ -88,29 +88,28 @@ export default function CompanyPrivilages() {
           },
         }
       );
-  
+
       const ipfsData = "ipfs.io/ipfs/" + res.data.IpfsHash;
       setIpfsAddress(ipfsData);
       alert_(success, "File successfully uploaded");
       console.log(ipfsData);
-  
+
       // Extract form data for other fields
       const formDataForFields = {
         // Include other form fields here
       };
-  
+
       // Additional logic or state updates can be done here
-  
+
       console.log("Form data for fields:", formDataForFields);
       console.log(`File uploaded to IPFS:`, ipfsData);
-  
+
       // Clear the selected file after uploading
       setSelectedFile([]);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
-  
 
   const alert_ = (indication, hash) => {
     Swal.fire({
@@ -168,25 +167,23 @@ export default function CompanyPrivilages() {
     }
   };
 
-// 2. Function Call On Add Candidate Document Details
-const onSubmitOfDocumentDetails = async (data) => {
-  // Convert the Date object to a string
-  data.expairyDate = data.expairyDate.toString();
+  // 2. Function Call On Add Candidate Document Details
+  const onSubmitOfDocumentDetails = async (data) => {
+    // Convert the Date object to a string
+    data.expairyDate = data.expairyDate.toString();
 
-  const candidateDocumentDetails = {
-    ...data,
-    ipfsAddress,
+    const candidateDocumentDetails = {
+      ...data,
+      ipfsAddress,
+    };
+
+    try {
+      console.log(candidateDocumentDetails);
+      // const doctorDetails = await blockchain.addCompanies(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
-
-  try {
-    console.log(candidateDocumentDetails);
-    // const doctorDetails = await blockchain.addCompanies(data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
-
 
   //3.Function Call On Add Current Company Details
   const onSubmitOfCurrentCompany = async (data) => {
@@ -324,6 +321,37 @@ const onSubmitOfDocumentDetails = async (data) => {
           <Accordion.Header>Add Document</Accordion.Header>
           <Accordion.Body>
             <div className="container">
+              <div className="row mt-3">
+                <div className="col-lg-6">
+                  <label>Upload Document:</label>
+                </div>
+                <div className="col-lg-6 mt-2">
+                  <div className="row d-flex">
+                    <div className="col-lg-6">
+                      <input
+                        type="file"
+                        className="form-control"
+                        onChange={handleFileChange}
+                      />
+                      </div>
+                      <div className="col-lg-6 mt-2">
+                      <button
+                        className="rounded mt-1"
+                        onClick={() => handleUploadClick()}
+                        // disabled={selectedFile.length === 0}
+                      >
+                        Upload Document
+                      </button>
+
+                     
+                    </div>
+                    <small className="text-primary">
+                        *upload the document first and then submit
+                      </small>
+                  </div>
+                </div>
+              </div>
+
               <form
                 onSubmit={handleSubmitDocumentDetails(
                   onSubmitOfDocumentDetails
@@ -400,30 +428,6 @@ const onSubmitOfDocumentDetails = async (data) => {
                             {documentDetailsErrors.expairyDate.message}
                           </p>
                         )}
-                      </div>
-                    </div>
-
-                    <div className="row mt-3">
-                      <div className="col-lg-6">
-                        <label>Upload Document:</label>
-                      </div>
-                      <div className="col-lg-6">
-                        <input
-                          type="file"
-                          className="form-control"
-                          onChange={handleFileChange}
-                        />
-                        <button
-                          className="rounded mt-2"
-                          onClick={() => handleUploadClick()}
-                          // disabled={selectedFile.length === 0}
-                        >
-                          Upload Document
-                        </button>
-
-                        <small className="text-primary">
-                          *upload the document first and then submit
-                        </small>
                       </div>
                     </div>
                   </div>
