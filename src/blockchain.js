@@ -214,14 +214,67 @@ console.log(data);
         console.error(errorMessage);
       }    }
 };
-  const editCandidate = async (id, name, location, email, phoneNumber) => {
+
+const editCandidateExistingCompany = async (data) => {
   try {
       const contract = await GetEthereumContract();
-      const transaction = await contract.editCandidate(id, name, location, email, phoneNumber);
+      const candidateInfo = await contract.getCandidate(candidateAddress[candidateByAddress]);
+      const transaction = await contract.editCandidate(candidateInfo.id, candidateInfo.name, candidateInfo.location, candidateInfo.email, candidateInfo.phoneNumber, data.currentCompany);
       await transaction.wait();
       let hashValue=await transaction.hash
       alert_(success,hashValue)
-      console.log(`Candidate with ID ${id} edited successfully`);
+      console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
+  } catch (error) {
+    console.log(error);
+    const errorMessage = error.message;
+
+    const errorRe = /execution reverted: (.*?)"/;
+    const errorMatch = errorRe.exec(errorMessage);
+
+    if (errorMatch) {
+      const error = errorMatch[1];
+      let err = error.toString();
+      alert_(info, err);
+    } else {
+      console.error(errorMessage);
+    }  }
+};
+
+const editCandidate = async (candidateByAddress) => {
+  try {
+      const contract = await GetEthereumContract();
+      const candidateInfo = await contract.getCandidate(candidateAddress[candidateByAddress]);
+      const transaction = await contract.editCandidate(candidateInfo.id, candidateInfo.name, candidateInfo.location, candidateInfo.email, candidateInfo.phoneNumber, candidateInfo.currentCompany);
+      await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
+      console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
+  } catch (error) {
+    console.log(error);
+    const errorMessage = error.message;
+
+    const errorRe = /execution reverted: (.*?)"/;
+    const errorMatch = errorRe.exec(errorMessage);
+
+    if (errorMatch) {
+      const error = errorMatch[1];
+      let err = error.toString();
+      alert_(info, err);
+    } else {
+      console.error(errorMessage);
+    }  }
+};
+  
+  const removeExistingCompany = async (candidateByAddress) => {
+  try {
+      const contract = await GetEthereumContract();
+      let zeroAddress=["0x0000000000000000000000000000000000000000"];
+      const candidateInfo = await contract.getCandidate(candidateAddress[candidateByAddress]);
+      const transaction = await contract.editCandidate(candidateInfo.id, candidateInfo.name, candidateInfo.location, candidateInfo.email, candidateInfo.phoneNumber, zeroAddress);
+      await transaction.wait();
+      let hashValue=await transaction.hash
+      alert_(success,hashValue)
+      console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
   } catch (error) {
     console.log(error);
     const errorMessage = error.message;
@@ -435,13 +488,12 @@ const getDocument = async (documentId) => {
 };
 
 // Function to get candidates by company ID
-const getCandidatesByCompany = async (companyAddress) => {
+const getCandidatesByCompany = async (companyByAddress) => {
   try {
     const contract = await GetEthereumContract();
-    const candidates = await contract.getCandidatesByCompany(companyAddress);
-    console.log(`Candidates for Company at ${companyAddress}:`);
-    console.log(candidates);
-    return candidates;
+    const candidateInfo = await contract.getCandidatesByCompany(companyAddress[companyByAddress].Id);
+    console.log(candidateInfo);
+    return candidateInfo;
   } catch (error) {
     console.error("Error fetching candidates:", error);
     return [];
@@ -450,12 +502,10 @@ const getCandidatesByCompany = async (companyAddress) => {
 
 
 // Function to get documents by candidate ID
-const getDocumentsByCandidate = async (candidateId) => {
+const getDocumentsByCandidate = async (candidateByAddress) => {
   try {
     const contract = await GetEthereumContract();
-    const candidate = await contract.getCandidate(candidateId);
-    const documents = await contract.getDocumentsByCandidate(candidate.address_);
-    console.log(`Documents for Candidate ${candidate.name} (ID: ${candidateId}):`);
+    const documentInfo = await contract.getDocumentsByCandidate(candidateAddress[candidateByAddress].Id);
     console.log(documents);
     return documents;
   } catch (error) {
