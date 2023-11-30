@@ -292,31 +292,50 @@ contract Verification is Ownable {
     }
 
     function addDocuments(
-        string[] memory _names,
-        string[] memory _cids,
-        uint256[] memory _candidateIds,
-        string[] memory _typesOfDocument,
-        string[] memory _expirationDates
+        string memory _name,
+        string memory _cid,
+        uint256 _candidateId,
+        string memory _typeOfDocument,
+        string memory _expirationDate
     ) external {
         require(isCompany(), "Only company can call");
-        require(
-            _names.length == _cids.length &&
-            _names.length == _candidateIds.length,
-            "Mismatched input lengths"
-        );
+        // require(
+        //     _names.length == _cids.length &&
+        //     _names.length == _candidateIds.length,
+        //     "Mismatched input lengths"
+        // );
 
-        for (uint256 i = 0; i < _names.length; i++) {
-            string memory _name = _names[i];
-            string memory _cid = _cids[i];
-            uint256 _candidateId = _candidateIds[i];
-            string memory _typeOfDocument = _typesOfDocument[i];
-            string memory _expirationDate = _expirationDates[i];
+        // for (uint256 i = 0; i < _names.length; i++) {
+        //     string memory _name = _names[i];
+        //     string memory _cid = _cids[i];
+        //     uint256 _candidateId = _candidateIds[i-1];
+        //     string memory _typeOfDocument = _typesOfDocument[i];
+        //     string memory _expirationDate = _expirationDates[i];
 
-            require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
+        //     require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
 
-            uint256 documentId = documents.length + 1; // Increment the counter and use it as the new ID
+        //     uint256 documentId = documents.length + 1; // Increment the counter and use it as the new ID
 
-            documents.push(Document({
+        //     documents.push(Document({
+        //         date: block.timestamp,
+        //         name: _name,
+        //         cid: _cid,
+        //         id: documentId,
+        //         typeOfDocument: _typeOfDocument,
+        //         expirationDate: _expirationDate,
+        //         isVerified: false,
+        //         isCancelled: false,
+        //         candidateId: _candidateId
+        //     }));
+
+        //     // Add the document ID to the candidate's documentIds array
+        //     candidates[_candidateId].documentIds.push(documentId);
+
+        //     emit DocumentAdded(documentId, _name, _cid, _candidateId, _typeOfDocument, _expirationDate);
+        // }
+        // uint256 _candidateId = _candidateId[i-1];
+         uint256 documentId = documents.length + 1; 
+        Document memory newData=Document({
                 date: block.timestamp,
                 name: _name,
                 cid: _cid,
@@ -326,13 +345,9 @@ contract Verification is Ownable {
                 isVerified: false,
                 isCancelled: false,
                 candidateId: _candidateId
-            }));
-
-            // Add the document ID to the candidate's documentIds array
+            });
+            documents.push(newData);
             candidates[_candidateId].documentIds.push(documentId);
-
-            emit DocumentAdded(documentId, _name, _cid, _candidateId, _typeOfDocument, _expirationDate);
-        }
     }
 
     function removeDocuments(uint256[] memory _candidateIds, uint256[] memory _documentIds) external {
@@ -466,15 +481,15 @@ function getCandidatesByCompany(uint256 _companyId) external view returns (Candi
     return result;
 }
 
- function getTotalCompanies() internal view returns (uint256) {
+ function getTotalCompanies() public view returns (uint256) {
         return companies.length;
     }
 
-    function getTotalCandidates() internal view returns (uint256) {
+    function getTotalCandidates() public view returns (uint256) {
         return candidates.length;
     }
 
-    function getTotalDocuments() internal view returns (uint256) {
+    function getTotalDocuments() public view returns (uint256) {
         return documents.length;
     }
 

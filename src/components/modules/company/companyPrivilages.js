@@ -179,7 +179,7 @@ export default function CompanyPrivilages() {
 
     try {
       console.log(candidateDocumentDetails);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.addDocuments(candidateDocumentDetails);
     } catch (error) {
       console.error("Error:", error);
     }

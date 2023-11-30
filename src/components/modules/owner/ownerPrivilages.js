@@ -166,9 +166,10 @@ export default function OwnerPrivilages() {
   const removeCompanyAddress = async (data) => {
     try {
       console.log(data);
-      const removedCompany = await blockchain.removeCompanies(
-        data.companyAddressToRemove
-      );
+      // const removedCompany = await blockchain.removeCompanies(
+      //   data.companyAddressToRemove
+      // );
+      const data_= await blockchain.getAndCategorizeAllDocuments()
     } catch (error) {
       console.error("Error:", error);
     }
@@ -232,7 +233,7 @@ export default function OwnerPrivilages() {
               >
                 <div className="form-group row mt-2">
                   <div className="col-lg-6 text-center">
-                    <label>Verifier Address to Remove:</label>
+                    <label>Verifier ID to Remove:</label>
                   </div>
                   <div className="col-lg-6">
                     <input
@@ -447,7 +448,7 @@ export default function OwnerPrivilages() {
               >
                 <div className="form-group row mt-2">
                   <div className="col-lg-6 text-center">
-                    <label>Company Address to Remove:</label>
+                    <label>Company ID to Remove:</label>
                   </div>
                   <div className="col-lg-6">
                     <input
