@@ -4,7 +4,6 @@ import instagram from "../../../assets/destinationPage/contact/instagram.png";
 import facebook from "../../../assets/destinationPage/contact/facebook.png";
 import twitter from "../../../assets/destinationPage/contact/twitter.png";
 import github from "../../../assets/destinationPage/contact/github.png";
-import Scrollbar from '../../header&footer/header/scrollbar'
 
 
 export default function HomePage() {
@@ -13,7 +12,7 @@ export default function HomePage() {
      
         <div className="container-fluid homeBg ">
           <div className="row">
-            <Scrollbar/>
+            
           </div>
           <div className="row">
             <div className="col-lg-6 d-none d-lg-block">

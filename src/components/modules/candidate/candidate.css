@@ -1,0 +1,12 @@
+.candidateBg {
+  background-image: url("../../../assets/modules/candidate//candidate.jpg");
+  background-size: 100% 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  height: 90vh;
+}
+
+.wagmiBtn{
+  margin-left: 35%;
+  margin-top: 5%;
+}

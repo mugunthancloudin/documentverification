@@ -1,39 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import { useAccount } from "wagmi";
+import Blockchain from "../../../blockchain";
 import "./verifier.css";
-import Swal from "sweetalert2";
 import VerifierPrivilages from "./verifierPrivilages";
+import VerificationDashboard from "./verificationDashboard";
 
 export default function VerifierHome() {
-  const [data, setData] = useState([
-    {
-      sno: 1,
-      candidateId: "C001",
-      documentId: "D001",
-      documentName: "Resume",
-      documentType: "PDF",
-      expiryDate: "2023-12-31",
-      cid: "CID001",
-      verify: "Pending",
-    },
-    {
-      sno: 2,
-      candidateId: "C002",
-      documentId: "D002",
-      documentName: "Cover Letter",
-      documentType: "Word",
-      expiryDate: "2023-11-30",
-      cid: "CID002",
-      verify: "Approved",
-    },
-    // Add more data entries as needed
-  ]);
+  const { address, isConnected } = useAccount();
+  const blockchain = Blockchain();
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [documentForVerification,setDocumentForVerification] = useState();
+  console.log(documentForVerification);
+
 
   const handleVerification = (item) => {
     setSelectedItem(item);
@@ -44,16 +24,35 @@ export default function VerifierHome() {
     setShowModal(false);
   };
 
-  const handleConfirmVerification = () => {
-    // Handle the verification logic here
-    const updatedData = data.map((dataItem) =>
-      dataItem.sno === selectedItem.sno
-        ? { ...dataItem, verify: "Verified" }
-        : dataItem
-    );
-    setData(updatedData);
-    setShowModal(false);
-  };
+  // const handleConfirmVerification = () => {
+  //   // Handle the verification logic here
+  //   const updatedData = data.map((dataItem) =>
+  //     dataItem.sno === selectedItem.sno
+  //       ? { ...dataItem, verify: "Verified" }
+  //       : dataItem
+  //   );
+  //   setData(updatedData);
+  //   setShowModal(false);
+  // };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isConnected === true) {
+        try {
+          let personal = await blockchain.getAndCategorizeAllDocuments();
+          console.log(personal);
+          setDocumentForVerification(personal);
+          
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      } else {
+        console.log("Not a patient");
+      }
+    };
+
+    fetchData();
+  }, [isConnected]);
 
   return (
     <>
@@ -61,14 +60,23 @@ export default function VerifierHome() {
         <div className="container">
           <div className="row ">
             <div className="col-lg-6 ">
-              <div className="row">
-                <VerifierPrivilages />
+              <div className="row text-center mt-5">
+                <h1 className="mt-5">Verify Your Certificates</h1>
+                <p className="mt-3">
+                  This is the certificate verification site for Indian Institute
+                  of Information{" "}
+                </p>
+                <hr className="mt-2" />
+                <h5 className="mt-2">Connect to verify the certificates!</h5>
+                <div className="wagmiBtn mb-5">
+                  <w3m-button />
+                </div>
+                {isConnected ? <VerifierPrivilages /> : null}
               </div>
             </div>
-            <div className="col-lg-6 text-end pe-5">
-              <w3m-button />
-            </div>
+            <div className="col-lg-6">&nbsp;</div>
           </div>
+          {isConnected ? <VerificationDashboard /> : null}
         </div>
       </div>
     </>

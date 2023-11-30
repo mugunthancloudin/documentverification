@@ -54,13 +54,15 @@ export default function VerificationDashboard() {
     setShowModal(false);
   };
 
+ 
+
   return (
     <>
       <div className="container-fluid mt-5">
         <div className="container">
           <div className="row text-white    ">
             <Tabs
-              defaultActiveKey="profile"
+              defaultActiveKey="home"
               id="justify-tab-example"
               className="mb-3 verifier "
               justify

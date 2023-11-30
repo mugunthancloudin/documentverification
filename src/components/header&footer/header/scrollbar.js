@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Link } from "react-scroll";
 import brandLogo from "../../../assets/header/verificationLogo.jpg";
-import { Navbar, Nav, Button, NavLink } from "react-bootstrap";
+import { Navbar, Nav, Button, NavLink, NavbarToggle } from "react-bootstrap";
 import { useAccount } from "wagmi";
 
 // import * as blockchain from "../../../blockchain";
@@ -44,35 +44,42 @@ export default function Scrollbar() {
 
   return (
     <>
-      <Navbar expand="lg" className="text-white " sticky="top">
-        <Container fluid>
+      <Navbar className="navbar bg-secondary" sticky="top" expand="lg">
+        <Container >
           <NavLink href="/">
             <div className="d-flex">
               <img src={brandLogo} width={40} className="navlogo" />
               <h4 className="ms-3 mt-3 ">Document Verification</h4>
             </div>
           </NavLink>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll" className="justify-content-end">
-            <Nav className="justify-content-end " navbarScroll>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action1" smooth={true} duration={100}>
-                Home
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action2" smooth={true} duration={200}>
-                Owner
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action3" smooth={true} duration={300}>
-                Verifier
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action4" smooth={true} duration={400}>
-                Company
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action5" smooth={true} duration={500}>
-                Candidate
-              </Nav.Link>
-              <Nav.Link as={Link} className="text-white fw-bold" to="action6" smooth={true} duration={600}>
-                Contact us
-              </Nav.Link>
+          <NavbarToggle aria-controls="navbar-dark-example" />
+
+          <Navbar.Collapse  id="navbar-dark-example"
+            className="justify-content-end fw-bold   ">
+            <Nav className="justify-content-end" navbarScroll>
+              <NavLink href="/" className="fw-bold" duration={100}>
+                <div className="glow-on-hover">Home</div>
+              </NavLink>
+
+              <NavLink href="/owner" className="fw-bold" duration={200}>
+                <div className="glow-on-hover">Owner</div>
+              </NavLink>
+
+              <NavLink href="/verifier" className="fw-bold" duration={300}>
+                <div className="glow-on-hover">Verifier</div>
+              </NavLink>
+
+              <NavLink href="/company" className="fw-bold" duration={400}>
+                <div className="glow-on-hover">Company</div>
+              </NavLink>
+
+              <NavLink href="/candidate" className="fw-bold" duration={500}>
+                <div className="glow-on-hover">Candidate</div>
+              </NavLink>
+
+              <NavLink href="/contact" className="fw-bold" duration={600}>
+                <div className="glow-on-hover">Contact us</div>
+              </NavLink>
             </Nav>
           </Navbar.Collapse>
 
