@@ -47,31 +47,31 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (data) => {
-    try {
-      let data=[verifiers]
-      const contract = await GetEthereumContract();
-      const transaction = await contract.addVerifiers(data); 
-      await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log(`Verifiers added successfully`);
-    } catch (error) {
-      // console.log(error);
-      const errorMessage = error.message;
+  // const addVerifiers = async (data) => {
+  //   try {
+  //     let data=[verifiers]
+  //     const contract = await GetEthereumContract();
+  //     const transaction = await contract.addVerifiers(data); 
+  //     await transaction.wait();
+  //     let hashValue=await transaction.hash
+  //     alert_(success,hashValue)
+  //     console.log(`Verifiers added successfully`);
+  //   } catch (error) {
+  //     // console.log(error);
+  //     const errorMessage = error.message;
   
-      const errorRe = /execution reverted: (.*?)"/;
-      const errorMatch = errorRe.exec(errorMessage);
+  //     const errorRe = /execution reverted: (.*?)"/;
+  //     const errorMatch = errorRe.exec(errorMessage);
   
-      if (errorMatch) {
-        const error = errorMatch[1];
-        let err = error.toString();
-        alert_(info, err);
-      } else {
-        console.error(errorMessage);
-      }
-    }
-  };
+  //     if (errorMatch) {
+  //       const error = errorMatch[1];
+  //       let err = error.toString();
+  //       alert_(info, err);
+  //     } else {
+  //       console.error(errorMessage);
+  //     }
+  //   }
+  // };
   
   const replaceVerifiers = async (oldVerifier, newVerifier) => {
     try {
@@ -473,7 +473,7 @@ const alert_ = (indication, hash) => {
   });
 };
 return{
-  addVerifiers,
+  // addVerifiers,
   isOwner,
   replaceVerifiers,
   removeVerifiers,
