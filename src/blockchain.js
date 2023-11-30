@@ -486,26 +486,26 @@ export default function Blockchain() {
   };
 
   // Function to get candidate details by ID
-  const getCandidate = async (candidateByAddress) => {
-    try {
-      const contract = await GetEthereumContract();
-      const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
-      console.log(result);
-    } catch (error) {
-      console.error("Error fetching candidate:", error);
-    }
-  };
+  // const getCandidate = async (candidateByAddress) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
+  //     console.log(result);
+  //   } catch (error) {
+  //     console.error("Error fetching candidate:", error);
+  //   }
+  // };
 
   // Function to get company details by ID
-  const getCompany = async (companyByAddress) => {
-    try {
-      const contract = await GetEthereumContract();
-      const result = await contract.getCompany(companyAddress[companyByAddress].Id);
-      console.log(result);
-    } catch (error) {
-      console.error("Error fetching company:", error);
-    }
-  };
+  // const getCompany = async (companyByAddress) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const result = await contract.getCompany(companyAddress[companyByAddress].Id);
+  //     console.log(result);
+  //   } catch (error) {
+  //     console.error("Error fetching company:", error);
+  //   }
+  // };
 
   // Function to get list of verifiers
   const getVerifiers = async () => {
@@ -519,15 +519,15 @@ export default function Blockchain() {
   };
 
 // Function to get document details by ID
-const getDocument = async (candidateByAddress) => {
-  try {
-    const contract = await GetEthereumContract();
-    const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
-    console.log(result);
-  } catch (error) {
-    console.error("Error fetching document:", error);
-  }
-};
+// const getDocument = async (candidateByAddress) => {
+//   try {
+//     const contract = await GetEthereumContract();
+//     const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
+//     console.log(result);
+//   } catch (error) {
+//     console.error("Error fetching document:", error);
+//   }
+// };
 
   // Function to get candidates by company ID
   // const getCandidatesByCompany = async (companyByAddress) => {
