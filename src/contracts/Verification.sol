@@ -7,15 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Verification is Ownable {
     address[] public verifiers;
     uint256 public maxVerifiers = 10;
-
+    
     event VerifierAdded(address indexed verifier);
     event VerifierRemoved(address indexed verifier);
     event VerifierReplaced(address indexed oldVerifier, address indexed newVerifier);
-    event CompanyAdded(uint256 indexed id, address indexed companyAddress, string name, string location, string phoneNumber, string licenseNumber, string email);
+    event CompanyAdded(uint256 indexed id, address indexed companyAddress, string name, string location, uint phoneNumber, string licenseNumber, string email);
     event CompanyRemoved(uint256 indexed id);
-    event CandidateAdded(uint256 indexed id, string name, string location, string email, string phoneNumber);
+    event CandidateAdded(uint256 indexed id, string name, string location, string email, uint phoneNumber);
     event CandidateRemoved(uint256 indexed id);
-    event CandidateEdited(uint256 indexed id, string name, string location, string email, string phoneNumber);
+    event CandidateEdited(uint256 indexed id, string name, string location, string email, uint phoneNumber, address currentCompany);
     event CandidateCurrentCompanyEdited(uint256 indexed id, address newCurrentCompany);
     event DocumentAdded(uint256 indexed id, string name, string cid, uint256 candidateId, string typeOfDocument, string expirationDate);
     event DocumentRemoved(uint256 documentId, uint256 candidateId);
@@ -29,7 +29,7 @@ contract Verification is Ownable {
         uint256 Id;
         uint256[] candidateIds;
         string location;
-        string phoneNumber;
+        uint256 phoneNumber;
         string licenseNumber;
         string email;
     }
@@ -43,7 +43,7 @@ contract Verification is Ownable {
         uint256 Id;
         string location;
         string email;
-        string phoneNumber;
+        uint256 phoneNumber;
     }
 
     struct Document {
@@ -75,6 +75,7 @@ contract Verification is Ownable {
     function isVerifier() internal view returns (bool) {
         return isVerifier(msg.sender);
     }
+
 
     function isVerifier(address _address) internal view returns (bool) {
         for (uint256 i = 0; i < verifiers.length; i++) {
@@ -135,9 +136,9 @@ contract Verification is Ownable {
                 }
             }
         }
-    }
+    } 
 
-    function addCompanies(address[] memory _addresses, string[] memory _names, string[] memory _locations, string[] memory _phoneNumbers, string[] memory _licenseNumbers, string[] memory _emails) external {
+    function addCompanies(address[] memory _addresses, string[] memory _names, string[] memory _locations, uint256[] memory _phoneNumbers, string[] memory _licenseNumbers, string[] memory _emails) external {
     require(isVerifier() || msg.sender == owner(), "Only verifier or owner can call");
     require(
         _addresses.length == _names.length &&
@@ -152,7 +153,7 @@ contract Verification is Ownable {
         address _address = _addresses[i];
         string memory _name = _names[i];
         string memory _location = _locations[i];
-        string memory _phoneNumber = _phoneNumbers[i];
+        uint256 _phoneNumber = _phoneNumbers[i];
         string memory _licenseNumber = _licenseNumbers[i];
         string memory _email = _emails[i];
 
@@ -196,7 +197,7 @@ contract Verification is Ownable {
     string[] memory _names,
     string[] memory _locations,
     string[] memory _emails,
-    string[] memory _phoneNumbers
+    uint256[] memory _phoneNumbers
 ) external {
     require(isCompany(), "Only company can call");
     require(_addresses.length == _names.length, "Mismatched input lengths");
@@ -206,7 +207,7 @@ contract Verification is Ownable {
         string memory _name = _names[i];
         string memory _location = _locations[i];
         string memory _email = _emails[i];
-        string memory _phoneNumber = _phoneNumbers[i];
+        uint256 _phoneNumber = _phoneNumbers[i];
 
         // Check if the name or address already exists
         require(candidateAddress[_address] == 0, "Candidate with the given address already exists");
@@ -239,12 +240,14 @@ contract Verification is Ownable {
 }
 
     function editCandidate(
-        uint256 _id,
+        uint256 _candidateId,
         string memory _name,
         string memory _location,
         string memory _email,
-        string memory _phoneNumber
+        uint256 _phoneNumber,
+        address _currentCompany
     ) external {
+        uint256 _id = _candidateId -1;
         require(isCompany(), "Only company can call");
         require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
         require(candidates[_id].currentCompany == msg.sender, "You do not have permission to edit this candidate");
@@ -253,15 +256,16 @@ contract Verification is Ownable {
         candidates[_id].location = _location;
         candidates[_id].email = _email;
         candidates[_id].phoneNumber = _phoneNumber;
+        candidates[_id].currentCompany = _currentCompany;
 
-        emit CandidateEdited(_id, _name, _location, _email, _phoneNumber);
+        emit CandidateEdited(_id, _name, _location, _email, _phoneNumber,_currentCompany);
     }
 
     function removeCandidates(uint256[] memory _ids) external {
         require(isVerifier() || isCompany(), "Only verifier or owner can call");
 
         for (uint256 i = 0; i < _ids.length; i++) {
-            uint256 _id = _ids[i];
+            uint256 _id = _ids[i-1];
 
             require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
             uint256 arrayIndex = _id - 1;
@@ -271,7 +275,8 @@ contract Verification is Ownable {
         }
     }
 
-    function editCandidateCurrentCompany(uint256 _id, address _newCurrentCompany) external {
+    function editCandidateCurrentCompany(uint256 _candidateId, address _newCurrentCompany) external {
+        uint256 _id = _candidateId;
         require(isCompany(), "Only company can call");
         require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
 
@@ -334,8 +339,8 @@ contract Verification is Ownable {
         require(_candidateIds.length == _documentIds.length, "Mismatched input lengths");
 
         for (uint256 i = 0; i < _candidateIds.length; i++) {
-            uint256 _candidateId = _candidateIds[i];
-            uint256 _documentId = _documentIds[i];
+            uint256 _candidateId = _candidateIds[i-1];
+            uint256 _documentId = _documentIds[i-1];
 
             require(candidates[_candidateId].Id != 0, "Candidate with given ID does not exist");
 
@@ -372,7 +377,27 @@ contract Verification is Ownable {
         return companyAddress[msg.sender];
     }
 
-function getCandidate(uint256 _id) public view returns (string memory, uint256, string memory, string memory, string memory) {
+function getCompany(uint256 _companyId) external view returns (uint256, address, string memory, string memory, uint256, string memory, string memory) {
+    require(_companyId <= companies.length, "Invalid company ID");
+    uint256 arrayIndex = _companyId - 1;
+
+    Company storage company = companies[arrayIndex];
+
+    // Check if the company exists
+    require(company.Id != 0, "Company with given ID does not exist");
+
+    return (
+        company.Id,
+        company.address_,
+        company.name,
+        company.location,
+        company.phoneNumber,
+        company.licenseNumber,
+        company.email
+    );
+}
+
+function getCandidate(uint256 _id) public view returns (string memory, uint256, string memory, string memory, uint256) {
     require(_id <= candidates.length, "Invalid candidate ID");
     uint256 arrayIndex = _id - 1;
 
@@ -411,31 +436,12 @@ function getDocuments(uint256 _candidateId) external view returns (Document[] me
     return result;
 }
 
-function getDocumentsByCandidate(uint256 _candidateId) external view returns (Document[] memory) {
-    require(_candidateId <= candidates.length, "Invalid candidate ID");
-    uint256 arrayIndex = _candidateId - 1;
+function getCandidatesByCompany(address _companyAddress) external view returns (Candidate[] memory) {
+    require(companyAddress[_companyAddress] != 0, "Invalid company address");
 
-    Candidate storage candidate = candidates[arrayIndex];
-
-    // Check if the candidate exists
-    require(candidate.Id != 0, "Candidate with given ID does not exist");
-
-    uint256[] memory documentIds = candidate.documentIds;
-    Document[] memory result = new Document[](documentIds.length);
-
-    // Fetch all documents associated with the candidate directly
-    for (uint256 i = 0; i < documentIds.length; i++) {
-        result[i] = documents[documentIds[i] - 1];
-    }
-
-    return result;
-}
-
-function getCandidatesByCompany(uint256 _companyId) external view returns (Candidate[] memory) {
-    require(_companyId <= companies.length, "Invalid company ID");
-    uint256 arrayIndex = _companyId - 1;
-
+    uint256 arrayIndex = companyAddress[_companyAddress] - 1;
     uint256[] memory candidateIds = companies[arrayIndex].candidateIds;
+
     Candidate[] memory result = new Candidate[](candidateIds.length);
 
     // Fetch all candidates associated with the company directly
@@ -446,12 +452,44 @@ function getCandidatesByCompany(uint256 _companyId) external view returns (Candi
     return result;
 }
 
-function getVerifiers() public view returns (address[] memory) {
+function getDocumentsByCandidate(address _candidateAddress) external view returns (Document[] memory) {
+    require(candidateAddress[_candidateAddress] != 0, "Invalid candidate address");
+
+    uint256 arrayIndex = candidateAddress[_candidateAddress] - 1;
+    uint256[] memory documentIds = candidates[arrayIndex].documentIds;
+
+    Document[] memory result = new Document[](documentIds.length);
+
+    // Fetch all documents associated with the candidate directly
+    for (uint256 i = 0; i < documentIds.length; i++) {
+        result[i] = documents[documentIds[i] - 1];
+    }
+
+    return result;
+}
+
+ function getTotalCompanies() internal view returns (uint256) {
+        return companies.length;
+    }
+
+    function getTotalCandidates() internal view returns (uint256) {
+        return candidates.length;
+    }
+
+    function getTotalDocuments() internal view returns (uint256) {
+        return documents.length;
+    }
+
+function getVerifiers() public view onlyOwner returns (address[] memory) {
     return verifiers;
 }
 
 function getOwner() public view returns (address) {
     return owner();
+}
+
+function getZeroAddress() public pure returns (address) {
+    return address(0);
 }
 
 }

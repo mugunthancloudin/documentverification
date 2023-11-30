@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { async } from "q";
+import Company from "./pages/company";
 
 const { ethereum } = window;
 const contractAddress = "0x5B142DD894CB0edA3345379356cd579DF854a8E6";
@@ -98,10 +99,10 @@ console.log(data);
     }
 };
 
-  const removeCompanies = async (ids) => {
+  const removeCompanies = async ([ids]) => {
     try {
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCompanies(ids);
+      const transaction = await contract.removeCompanies([ids]);
       await transaction.wait();
       console.log(`Companies removed successfully`);
     } catch (error) {
@@ -109,17 +110,23 @@ console.log(data);
     }
   };
   
-  const addCandidates = async (addresses, names, locations, emails, phoneNumbers) => {
+  const addCandidates = async (data) => {
     try {
         const contract = await GetEthereumContract();
-        const transaction = await contract.addCandidates(addresses, names, locations, emails, phoneNumbers);
+        const candidateInputArray = data.candidates.map(candidate => ({
+            address_: candidate.address,
+            name: candidate.name,
+            location: candidate.location,
+            email: candidate.email,
+            phoneNumber: candidate.phoneNumber,
+        }));
+        const transaction = await contract.addCandidates(candidateInputArray);
         await transaction.wait();
         console.log('Candidates added successfully');
     } catch (error) {
         console.error('Error adding candidates:', error);
     }
 };
-
   const editCandidate = async (id, name, location, email, phoneNumber) => {
   try {
       const contract = await GetEthereumContract();
@@ -142,21 +149,26 @@ console.log(data);
   }
 };
 
-  const addDocuments = async (names, cids, candidateIds, typesOfDocument, expirationDates) => {
-    try {  
+const addDocuments = async (data) => {
+  try {
       const contract = await GetEthereumContract();
-      const transaction = await contract.addDocuments(names, cids, candidateIds, typesOfDocument, expirationDates);
+      const transaction = await contract.addDocuments(
+          data.names,
+          data.cids,
+          data.candidateIds,
+          data.typesOfDocument,
+          data.expirationDates
+      );
       await transaction.wait();
       console.log('Documents added successfully');
   } catch (error) {
       console.error('Error adding documents:', error);
   }
 };
-
-  const removeCandidates = async (ids) => {
+  const removeCandidates = async ([ids]) => {
     try {
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCandidates(ids);
+      const transaction = await contract.removeCandidates([ids]);
       await transaction.wait();
       console.log(`Candidates removed successfully`);
     } catch (error) {
@@ -164,11 +176,11 @@ console.log(data);
     }
   };
 
-  const verifyDocuments = async (documentIds) => {
+  const verifyDocuments = async ([documentIds]) => {
     try {
         const contract = await GetEthereumContract();
         const isCancelled = false;
-        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
+        const transaction = await contract.verifyDocuments([documentIds], [isCancelled]);
         await transaction.wait();
         console.log('Documents verified successfully');
         return await getAndCategorizeAllDocuments();
@@ -177,11 +189,11 @@ console.log(data);
     }
   };
 
-  const cancelDocuments = async (documentIds, isCancelled) => {
+  const cancelDocuments = async ([documentIds], [isCancelled]) => {
     try {
         const contract = await GetEthereumContract();
         const isCancelled = true;
-        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
+        const transaction = await contract.verifyDocuments([documentIds], [isCancelled]);
         await transaction.wait();
         console.log('Documents verified successfully');
         return await getAndCategorizeAllDocuments();
@@ -226,7 +238,6 @@ console.log(data);
       throw error; // Propagate the error if needed
     }
   };
-  
 
   // Function to get candidate details by ID
   const getCandidate = async (getCandidateId) => {
@@ -273,26 +284,35 @@ const getDocument = async (documentId) => {
 };
 
 // Function to get candidates by company ID
-const getCandidatesByCompany = async (companyId) => {
+const getCandidatesByCompany = async (companyAddress) => {
   try {
     const contract = await GetEthereumContract();
-    const result = await contract.getCandidatesByCompany(companyId);
-    console.log(result);
+    const candidates = await contract.getCandidatesByCompany(companyAddress);
+    console.log(`Candidates for Company at ${companyAddress}:`);
+    console.log(candidates);
+    return candidates;
   } catch (error) {
     console.error("Error fetching candidates:", error);
+    return [];
   }
 };
+
 
 // Function to get documents by candidate ID
 const getDocumentsByCandidate = async (candidateId) => {
   try {
     const contract = await GetEthereumContract();
-    const result = await contract.getDocumentsByCandidate(candidateId);
-    console.log(result);
+    const candidate = await contract.getCandidate(candidateId);
+    const documents = await contract.getDocumentsByCandidate(candidate.address_);
+    console.log(`Documents for Candidate ${candidate.name} (ID: ${candidateId}):`);
+    console.log(documents);
+    return documents;
   } catch (error) {
     console.error("Error fetching documents:", error);
+    return [];
   }
 };
+
 
 const isOwner = async (address) => {
   console.log(address);
