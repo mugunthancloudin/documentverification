@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Blockchain from "../../../blockchain";
-
 //1.Adding New Candidate Details Validation
 const SignupSchema = yup.object().shape({
   name: yup.string().required("*Please enter your name."),
@@ -44,6 +43,8 @@ const RemoveEmployeeSchema = yup.object().shape({
 });
 
 export default function CompanyPrivilages() {
+  const blockchain=Blockchain()
+
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -92,7 +93,7 @@ export default function CompanyPrivilages() {
   const onSubmitOfCandidateDetails = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.addCandidates(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -435,7 +436,7 @@ export default function CompanyPrivilages() {
 
                 <div className="mt-3 mb-3 text-center">
                   <button type="submit" className="w-50">
-                    Remove Verifiers
+                    Remove Candidate
                   </button>
                 </div>
               </form>

@@ -49,7 +49,7 @@ export default function Blockchain() {
 
   const addVerifiers = async (data) => {
     try {
-      let data=[verifiers]
+      let data=[data]
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data); 
       await transaction.wait();
@@ -187,14 +187,8 @@ console.log(data);
   const addCandidates = async (data) => {
     try {
         const contract = await GetEthereumContract();
-        const candidateInputArray = data.candidates.map(candidate => ({
-            address_: candidate.address,
-            name: candidate.name,
-            location: candidate.location,
-            email: candidate.email,
-            phoneNumber: candidate.phoneNumber,
-        }));
-        const transaction = await contract.addCandidates(candidateInputArray);
+        const transaction = await contract.addCandidates([data.walletAddress], [data.name], [data.address], [data.email]
+          , [data.mobileNumber]);
         await transaction.wait();
         let hashValue=await transaction.hash
         alert_(success,hashValue)
@@ -548,7 +542,8 @@ return{
   removeVerifiers,
   addCompanies,
   removeCompanies,
-  setMaxVerifiers
+  setMaxVerifiers,
+  addCandidates
 }
 
 }
