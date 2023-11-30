@@ -46,9 +46,10 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (data) => {
+  const addVerifiers = async (data_) => {
     try {
-      let data = [data];
+      let data = [data_];
+      console.log(data);
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data);
       await transaction.wait();
@@ -350,12 +351,13 @@ export default function Blockchain() {
   const addDocuments = async (data) => {
     try {
       const contract = await GetEthereumContract();
+      console.log(data);
       const transaction = await contract.addDocuments(
-        data.names,
-        data.cids,
-        data.candidateIds,
-        data.typesOfDocument,
-        data.expirationDates
+        [data.name],
+        [data.ipfsAddress],
+        [data.candidateId],
+        [data.docType],
+        [data.expairyDate.toString()]
       );
       await transaction.wait();
       let hashValue = await transaction.hash;
@@ -472,13 +474,13 @@ export default function Blockchain() {
           unverifiedDocuments.push(document);
         }
       }
-
-      return {
-        allDocuments,
-        verifiedDocuments,
-        unverifiedDocuments,
-        cancelledDocuments,
-      };
+console.log(allDocuments);
+      // return {
+      //   allDocuments,
+      //   verifiedDocuments,
+      //   unverifiedDocuments,
+      //   cancelledDocuments,
+      // };
     } catch (error) {
       console.error("Error in categorize documents", error);
       throw error; // Propagate the error if needed
