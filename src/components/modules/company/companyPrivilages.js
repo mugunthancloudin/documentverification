@@ -3,7 +3,13 @@ import Accordion from "react-bootstrap/Accordion";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import axios from "axios";
 import Blockchain from "../../../blockchain";
+import Swal from "sweetalert2";
+
+const JWT =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI1NWM1YzJmNC0xZGRlLTRiNWEtYTBlMi1lYTNkNjVmNWFhMjIiLCJlbWFpbCI6ImZlYXJvZmFsbGdhbWVyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfSx7ImlkIjoiTllDMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJkNTA0MmU2ZDllNTgzYjE5MjRhYiIsInNjb3BlZEtleVNlY3JldCI6IjQ0ODAwYjQ5YWNlZmNlNzhiM2U2MjRlZmFmNzU2YjVjZDZhODJkYTk2MGM5MzdiMjQ3YWIyODNhZmUwZjBmYTYiLCJpYXQiOjE3MDA3Mzg5OTJ9.2CI_ewpLvbwj7bgxW9Iu6QnDqC2gkjyTJHtyk6DNp4U"; // Replace with your actual JWT token
+
 //1.Adding New Candidate Details Validation
 const SignupSchema = yup.object().shape({
   name: yup.string().required("*Please enter your name."),
@@ -22,34 +28,91 @@ const DocumentDetailsSchema = yup.object().shape({
   candidateId: yup.number().required("*Please enter the Candidate Id."),
   docType: yup.string().required("*Please enter the Document Type."),
   expairyDate: yup.date().required("*Please enter the Expiry Date."),
-  documentFile: yup
-    .mixed()
-    .test("fileSize", "File size is too large", (value) => {
-      if (!value) return true; // Nothing to validate if no file is selected
-      return value.size <= 1024 * 1024 * 2; // 2 MB
-    })
-    .required("*Please upload a document file."),
 });
 
 //3.Adding Current Company Details Validation
 const CurrentCompanySchema = yup.object().shape({
   candidateId: yup.number().required("*Please enter the Candidate Id."),
-  companyWalletAddress: yup.string().required("*Company Wallet Address is required."),
+  companyWalletAddress: yup
+    .string()
+    .required("*Company Wallet Address is required."),
 });
 
 //4.Remove Employee Details Validation
 const RemoveEmployeeSchema = yup.object().shape({
-  employeeAddressToRemove: yup.string().required("*Please enter the Employee Address to Remove."),
+  employeeAddressToRemove: yup
+    .string()
+    .required("*Please enter the Employee Address to Remove."),
 });
 
 export default function CompanyPrivilages() {
-  const blockchain=Blockchain()
-
-  const [selectedFile, setSelectedFile] = useState(null);
+  let success = "success";
+  let info = "info";
+  const blockchain = Blockchain();
+  const [selectedFile, setSelectedFile] = useState([]);
+  const [ipfsAddress, setIpfsAddress] = useState();
+  // console.log(ipfsAddress);
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
+    // const file = e.target.files[0];
+    setSelectedFile([...selectedFile, ...e.target.files]);
+
+    // setSelectedFile(file);
+  };
+
+  const handleUploadClick = async () => {
+    if (selectedFile.length === 0) {
+      console.log("No files selected.");
+      alert_(info, "No files selected.");
+      return;
+    }
+    if (selectedFile.length > 1) {
+      console.log("Cannot Upload Multiple files");
+      alert_(info, "Cannot Upload Multiple files");
+      return;
+    }
+
+    const formData = new FormData(); // Move this outside the loop
+
+    for (const file of selectedFile) {
+      formData.append("file", file);
+
+      try {
+        const res = await axios.post(
+          "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          formData,
+          {
+            maxBodyLength: "Infinity",
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+              Authorization: `Bearer ${JWT}`,
+            },
+          }
+        );
+
+        const ipfsData = "ipfs.io/ipfs/" + res.data.IpfsHash;
+        setIpfsAddress(ipfsData);
+        alert_(success, "file successfully uploaded");
+        console.log(ipfsData);
+        // Additional logic or state updates can be done here
+
+        console.log(`File uploaded to IPFS:`, ipfsData);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+
+    // Clear the selected files after uploading all files
+    setSelectedFile([]);
+  };
+  const alert_ = (indication, hash) => {
+    Swal.fire({
+      position: "center",
+      icon: indication,
+      title: hash,
+      showConfirmButton: true,
+      focusCancel: false,
+    });
   };
 
   //1.Add Candidate Details
@@ -79,7 +142,7 @@ export default function CompanyPrivilages() {
     resolver: yupResolver(CurrentCompanySchema),
   });
 
-//4.Remove Employee Details Validation
+  //4.Remove Employee Details Validation
   const {
     register: registerRemoveEmployee,
     handleSubmit: handleSubmitRemoveEmployee,
@@ -87,7 +150,6 @@ export default function CompanyPrivilages() {
   } = useForm({
     resolver: yupResolver(RemoveEmployeeSchema),
   });
-
 
   //1.Function Call On Add Candidate Details
   const onSubmitOfCandidateDetails = async (data) => {
@@ -101,16 +163,22 @@ export default function CompanyPrivilages() {
 
   //2.Function Call On Add Candidate Document Details
   const onSubmitOfDocumentDetails = async (data) => {
+    const candidateDocumentDetails = {
+      ...data,
+      ipfsAddress,
+    };
     try {
-      console.log(data);
+      
+      console.log(candidateDocumentDetails);
       // const doctorDetails = await blockchain.addCompanies(data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+
   //3.Function Call On Add Current Company Details
-  const onSubmitOfCurrentCompany  = async (data) => {
+  const onSubmitOfCurrentCompany = async (data) => {
     try {
       console.log(data);
       const doctorDetails = await blockchain.editCandidateExistingCompany(data);
@@ -119,8 +187,8 @@ export default function CompanyPrivilages() {
     }
   };
 
-   //4.Function Call On Remove Employee Details
-   const removeEmployeeAddress  = async (data) => {
+  //4.Function Call On Remove Employee Details
+  const removeEmployeeAddress = async (data) => {
     try {
       console.log(data);
       const doctorDetails = await blockchain.removeExistingCompany(data);
@@ -334,11 +402,17 @@ export default function CompanyPrivilages() {
                           className="form-control"
                           onChange={handleFileChange}
                         />
-                        {selectedFile && (
-                          <p className="mt-2">
-                            Selected File: {selectedFile.name}
-                          </p>
-                        )}
+                        <button
+                          className="rounded mt-2"
+                          onClick={() => handleUploadClick()}
+                          // disabled={selectedFile.length === 0}
+                        >
+                          Upload Document
+                        </button>
+
+                        <small className="text-primary">
+                          *upload the document first and then submit
+                        </small>
                       </div>
                     </div>
                   </div>
@@ -356,9 +430,7 @@ export default function CompanyPrivilages() {
           <Accordion.Body>
             <div className="container">
               <form
-                onSubmit={handleSubmitCurrentCompany(
-                  onSubmitOfCurrentCompany 
-                )}
+                onSubmit={handleSubmitCurrentCompany(onSubmitOfCurrentCompany)}
               >
                 <div className="form-group row">
                   <div className="col-lg-12">
@@ -412,9 +484,7 @@ export default function CompanyPrivilages() {
           <Accordion.Body>
             <div className="container">
               <form
-                onSubmit={handleSubmitRemoveEmployee(
-                  removeEmployeeAddress
-                )}
+                onSubmit={handleSubmitRemoveEmployee(removeEmployeeAddress)}
               >
                 <div className="form-group row mt-2">
                   <div className="col-lg-6 text-center">

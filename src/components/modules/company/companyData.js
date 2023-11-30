@@ -42,10 +42,10 @@ export default function CompanyData() {
       <div className="container-fluid">
         <div className="container">
           <div className="row mt-4">
-            {candidateDetails.length === 0 ? (
+            {/* {candidateDetails.length === 0 ? (
               <div>Loading...</div>
-            ) : (
-              candidateDetails.map((data) => (
+            ) : ( */}
+              {/* // candidateDetails.map((data) => ( */}
                 <div className="col-lg-4">
                   <div className="card-group d-flex h-100">
                     <div className="card ps-3 flex-fill">
@@ -58,8 +58,8 @@ export default function CompanyData() {
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              {/* )) */}
+            {/* )} */}
           </div>
         </div>
       </div>
