@@ -155,7 +155,7 @@ export default function CompanyPrivilages() {
   const onSubmitOfCandidateDetails = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.addCandidates(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -181,7 +181,7 @@ export default function CompanyPrivilages() {
   const onSubmitOfCurrentCompany = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.editCandidateExistingCompany(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -191,7 +191,7 @@ export default function CompanyPrivilages() {
   const removeEmployeeAddress = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.removeExistingCompany(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -506,7 +506,7 @@ export default function CompanyPrivilages() {
 
                 <div className="mt-3 mb-3 text-center">
                   <button type="submit" className="w-50">
-                    Remove Verifiers
+                    Remove Candidate
                   </button>
                 </div>
               </form>

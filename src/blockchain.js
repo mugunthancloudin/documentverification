@@ -3,11 +3,10 @@ import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { async } from "q";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 const { ethereum } = window;
-const contractAddress = "0x465A2464F8A1617811F38d7b169BcD0198280b1D";
+const contractAddress = "0xeD7b1D87d3D7D0F0db54c9fF4eEe985a6eaeFA6c";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -17,18 +16,18 @@ const providerUrl =
 export default function Blockchain() {
   let success = "success";
   let info = "info";
-  const { address,isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const GetEthereumContract = async () => {
     // if(isConnected)
     //  {
-      //check whether device pc or mobile
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      let contract = new ethers.Contract(contractAddress, contractAbi, signer);
-      // console.log(contract);
-      return contract;
-    // } 
+    //check whether device pc or mobile
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    let contract = new ethers.Contract(contractAddress, contractAbi, signer);
+    // console.log(contract);
+    return contract;
+    // }
     // else {
     //   console.log("wallet not connected");
     // }
@@ -39,57 +38,60 @@ export default function Blockchain() {
       const contract = await GetEthereumContract();
       const transaction = await contract.setMaxVerifiers(newMaxVerifiers);
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
       console.log(`Max Verifiers set to ${newMaxVerifiers}`);
     } catch (error) {
       console.error("Error setting max verifiers:", error);
     }
   };
 
-  // const addVerifiers = async (data) => {
-  //   try {
-  //     let data=[verifiers]
-  //     const contract = await GetEthereumContract();
-  //     const transaction = await contract.addVerifiers(data); 
-  //     await transaction.wait();
-  //     let hashValue=await transaction.hash
-  //     alert_(success,hashValue)
-  //     console.log(`Verifiers added successfully`);
-  //   } catch (error) {
-  //     // console.log(error);
-  //     const errorMessage = error.message;
-  
-  //     const errorRe = /execution reverted: (.*?)"/;
-  //     const errorMatch = errorRe.exec(errorMessage);
-  
-  //     if (errorMatch) {
-  //       const error = errorMatch[1];
-  //       let err = error.toString();
-  //       alert_(info, err);
-  //     } else {
-  //       console.error(errorMessage);
-  //     }
-  //   }
-  // };
-  
-  const replaceVerifiers = async (oldVerifier, newVerifier) => {
+  const addVerifiers = async (data) => {
     try {
-      let oldVerifiers=[oldVerifier]
-      let newVerifiers=[newVerifier]
+      let data = [data];
       const contract = await GetEthereumContract();
-      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
+      const transaction = await contract.addVerifiers(data);
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log(`Verifiers replaced successfully`)  ;
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log(`Verifiers added successfully`);
     } catch (error) {
       // console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
+    }
+  };
+
+  const replaceVerifiers = async (oldVerifier, newVerifier) => {
+    try {
+      let oldVerifiers = [oldVerifier];
+      let newVerifiers = [newVerifier];
+      const contract = await GetEthereumContract();
+      const transaction = await contract.replaceVerifiers(
+        oldVerifiers,
+        newVerifiers
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log(`Verifiers replaced successfully`);
+    } catch (error) {
+      // console.log(error);
+      const errorMessage = error.message;
+
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
@@ -101,21 +103,24 @@ export default function Blockchain() {
   };
   const removeVerifiers = async (oldVerifier) => {
     try {
-      let oldVerifiers=[oldVerifier]
-      let newVerifiers=["0x0000000000000000000000000000000000000000"]
+      let oldVerifiers = [oldVerifier];
+      let newVerifiers = ["0x0000000000000000000000000000000000000000"];
       const contract = await GetEthereumContract();
-      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
+      const transaction = await contract.replaceVerifiers(
+        oldVerifiers,
+        newVerifiers
+      );
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log(`Verifiers replaced successfully`)  ;
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log(`Verifiers replaced successfully`);
     } catch (error) {
       // console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
@@ -128,27 +133,27 @@ export default function Blockchain() {
 
   const addCompanies = async (data) => {
     try {
-
-console.log(data);
-        const contract = await GetEthereumContract();
-        const transaction = await contract.addCompanies(
-          [data.walletAddress],
-          [data.name],
-          [data.location],
-          [data.mobileNumber],
-          [data.licenceNumber],
-          [data.email]);
-        await transaction.wait();
-        let hashValue=await transaction.hash
-        alert_(success,hashValue)
-        console.log('Companies added successfully');
+      console.log(data);
+      const contract = await GetEthereumContract();
+      const transaction = await contract.addCompanies(
+        [data.walletAddress],
+        [data.name],
+        [data.location],
+        [data.mobileNumber],
+        [data.licenceNumber],
+        [data.email]
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log("Companies added successfully");
     } catch (error) {
       console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
@@ -157,207 +162,308 @@ console.log(data);
         console.error(errorMessage);
       }
     }
-};
+  };
 
-  const removeCompanies = async (ids) => {
+  const removeCompanies = async ([ids]) => {
     try {
       console.log(ids);
       const contract = await GetEthereumContract();
       const transaction = await contract.removeCompanies([ids]);
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
       console.log(`Companies removed successfully`);
     } catch (error) {
       console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
         alert_(info, err);
       } else {
         console.error(errorMessage);
-      }    }
+      }
+    }
   };
-  
-  const addCandidates = async (addresses, names, locations, emails, phoneNumbers) => {
+
+  const addCandidates = async (data) => {
     try {
-        const contract = await GetEthereumContract();
-        const transaction = await contract.addCandidates(addresses, names, locations, emails, phoneNumbers);
-        await transaction.wait();
-        let hashValue=await transaction.hash
-        alert_(success,hashValue)
-        console.log('Candidates added successfully');
+      const contract = await GetEthereumContract();
+      const transaction = await contract.addCandidates(
+        [data.walletAddress],
+        [data.name],
+        [data.address],
+        [data.email],
+        [data.mobileNumber]
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log("Candidates added successfully");
     } catch (error) {
       console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
         alert_(info, err);
       } else {
         console.error(errorMessage);
-      }    }
-};
+      }
+    }
+  };
 
-  const editCandidate = async (id, name, location, email, phoneNumber) => {
-  try {
+  const editCandidateExistingCompany = async (data) => {
+    try {
+      console.log(data);
       const contract = await GetEthereumContract();
-      const transaction = await contract.editCandidate(id, name, location, email, phoneNumber);
+      // let mappingData = await contract.candidateAddress(data);
+      // const candidateInfo = await contract.getCandidate(data.candidateId);
+      // console.log(candidateInfo);
+      const transaction = await contract.editCandidateCurrentCompany(
+        data.candidateId,
+        data.companyWalletAddress
+      );
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log(`Candidate with ID ${id} edited successfully`);
-  } catch (error) {
-    console.log(error);
-    const errorMessage = error.message;
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      // console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
 
-    const errorRe = /execution reverted: (.*?)"/;
-    const errorMatch = errorRe.exec(errorMessage);
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
 
-    if (errorMatch) {
-      const error = errorMatch[1];
-      let err = error.toString();
-      alert_(info, err);
-    } else {
-      console.error(errorMessage);
-    }  }
-};
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
+    }
+  };
+
+  // const editCandidate = async (candidateByAddress) => {
+  //   try {
+  //       const contract = await GetEthereumContract();
+  //       const candidateInfo = await contract.getCandidate(candidateAddress[candidateByAddress]);
+  //       const transaction = await contract.editCandidate(candidateInfo.id, candidateInfo.name, candidateInfo.location, candidateInfo.email, candidateInfo.phoneNumber, candidateInfo.currentCompany);
+  //       await transaction.wait();
+  //       let hashValue=await transaction.hash
+  //       alert_(success,hashValue)
+  //       console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
+  //   } catch (error) {
+  //     console.log(error);
+  //     const errorMessage = error.message;
+
+  //     const errorRe = /execution reverted: (.*?)"/;
+  //     const errorMatch = errorRe.exec(errorMessage);
+
+  //     if (errorMatch) {
+  //       const error = errorMatch[1];
+  //       let err = error.toString();
+  //       alert_(info, err);
+  //     } else {
+  //       console.error(errorMessage);
+  //     }  }
+  // };
+
+  const removeExistingCompany = async (candidateByAddress) => {
+    try {
+      // console.log(candidateByAddress);
+      const contract = await GetEthereumContract();
+      let zeroAddress = "0x0000000000000000000000000000000000000000";
+      let mappingData = await contract.candidateAddress(
+        candidateByAddress.employeeAddressToRemove
+      );
+      // console.log(Number(mappingData));
+      const candidateInfo = await contract.getCandidate(mappingData);
+      console.log(candidateInfo.Id);
+      const transaction = await contract.editCandidate(
+        candidateInfo.Id,
+        candidateInfo.name,
+        candidateInfo.location,
+        candidateInfo.email,
+        candidateInfo.phoneNumber,
+        zeroAddress
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log(`Candidate with ID ${candidateInfo.id} edited successfully`);
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
+
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
+    }
+  };
 
   const editCandidateCurrentCompany = async (id, newCurrentCompany) => {
-  try {
-      const contract = await GetEthereumContract();
-      const transaction = await contract.editCandidateCurrentCompany(id, newCurrentCompany);
-      await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log(`Current company of candidate with ID ${id} edited successfully`);
-  } catch (error) {
-    console.log(error);
-    const errorMessage = error.message;
-    const errorRe = /execution reverted: (.*?)"/;
-    const errorMatch = errorRe.exec(errorMessage);
-
-    if (errorMatch) {
-      const error = errorMatch[1];
-      let err = error.toString();
-      alert_(info, err);
-    } else {
-      console.error(errorMessage);
-    }  }
-};
-
-  const addDocuments = async (names, cids, candidateIds, typesOfDocument, expirationDates) => {
-    try {  
-      const contract = await GetEthereumContract();
-      const transaction = await contract.addDocuments(names, cids, candidateIds, typesOfDocument, expirationDates);
-      await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
-      console.log('Documents added successfully');
-  } catch (error) {
-    console.log(error);
-    const errorMessage = error.message;
-
-    const errorRe = /execution reverted: (.*?)"/;
-    const errorMatch = errorRe.exec(errorMessage);
-
-    if (errorMatch) {
-      const error = errorMatch[1];
-      let err = error.toString();
-      alert_(info, err);
-    } else {
-      console.error(errorMessage);
-    }  }
-};
-
-  const removeCandidates = async (ids) => {
     try {
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCandidates(ids);
+      const transaction = await contract.editCandidateCurrentCompany(
+        id,
+        newCurrentCompany
+      );
       await transaction.wait();
-      let hashValue=await transaction.hash
-      alert_(success,hashValue)
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log(
+        `Current company of candidate with ID ${id} edited successfully`
+      );
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
+    }
+  };
+
+  const addDocuments = async (data) => {
+    try {
+      const contract = await GetEthereumContract();
+      const transaction = await contract.addDocuments(
+        data.names,
+        data.cids,
+        data.candidateIds,
+        data.typesOfDocument,
+        data.expirationDates
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log("Documents added successfully");
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
+
+      const errorRe = /execution reverted: (.*?)"/;
+      const errorMatch = errorRe.exec(errorMessage);
+
+      if (errorMatch) {
+        const error = errorMatch[1];
+        let err = error.toString();
+        alert_(info, err);
+      } else {
+        console.error(errorMessage);
+      }
+    }
+  };
+  const removeCandidates = async ([ids]) => {
+    try {
+      const contract = await GetEthereumContract();
+      const transaction = await contract.removeCandidates([ids]);
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
       console.log(`Candidates removed successfully`);
     } catch (error) {
       console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
         alert_(info, err);
       } else {
         console.error(errorMessage);
-      }    }
-  };
-
-  const verifyDocuments = async (documentIds) => {
-    try {
-        const contract = await GetEthereumContract();
-        const isCancelled = false;
-        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
-        await transaction.wait();
-        console.log('Documents verified successfully');
-        return await getAndCategorizeAllDocuments();
-    } catch (error) {
-        console.error('Error verifying documents:', error);
+      }
     }
   };
 
-  const cancelDocuments = async (documentIds, isCancelled) => {
+  const verifyDocuments = async ([documentIds]) => {
     try {
-        const contract = await GetEthereumContract();
-        const isCancelled = true;
-        const transaction = await contract.verifyDocuments(documentIds, isCancelled);
-        await transaction.wait();
-        let hashValue=await transaction.hash
-        alert_(success,hashValue)
-        console.log('Documents verified successfully');
-        return await getAndCategorizeAllDocuments();
+      const contract = await GetEthereumContract();
+      const isCancelled = false;
+      const transaction = await contract.verifyDocuments(
+        [documentIds],
+        [isCancelled]
+      );
+      await transaction.wait();
+      console.log("Documents verified successfully");
+      return await getAndCategorizeAllDocuments();
+    } catch (error) {
+      console.error("Error verifying documents:", error);
+    }
+  };
+
+  const cancelDocuments = async ([documentIds], [isCancelled]) => {
+    try {
+      const contract = await GetEthereumContract();
+      const isCancelled = true;
+      const transaction = await contract.verifyDocuments(
+        [documentIds],
+        [isCancelled]
+      );
+      await transaction.wait();
+      let hashValue = await transaction.hash;
+      alert_(success, hashValue);
+      console.log("Documents verified successfully");
+      return await getAndCategorizeAllDocuments();
     } catch (error) {
       console.log(error);
       const errorMessage = error.message;
-  
+
       const errorRe = /execution reverted: (.*?)"/;
       const errorMatch = errorRe.exec(errorMessage);
-  
+
       if (errorMatch) {
         const error = errorMatch[1];
         let err = error.toString();
         alert_(info, err);
       } else {
         console.error(errorMessage);
-      }    }
+      }
+    }
   };
 
   const getAndCategorizeAllDocuments = async () => {
     try {
       const contract = await GetEthereumContract();
-  
+
       const allDocuments = [];
       const verifiedDocuments = [];
       const unverifiedDocuments = [];
       const cancelledDocuments = [];
-  
+
       const documentCount = await contract.documents.length();
-  
+
       for (let i = 1; i <= documentCount; i++) {
         const document = await contract.documents(i);
-  
+
         allDocuments.push(document);
-  
+
         if (document.isVerified) {
           verifiedDocuments.push(document);
         } else if (document.isCancelled) {
@@ -366,7 +472,7 @@ console.log(data);
           unverifiedDocuments.push(document);
         }
       }
-  
+
       return {
         allDocuments,
         verifiedDocuments,
@@ -374,11 +480,10 @@ console.log(data);
         cancelledDocuments,
       };
     } catch (error) {
-      console.error('Error in categorize documents', error);
+      console.error("Error in categorize documents", error);
       throw error; // Propagate the error if needed
     }
   };
-  
 
   // Function to get candidate details by ID
   const getCandidate = async (getCandidateId) => {
@@ -413,74 +518,78 @@ console.log(data);
     }
   };
 
-// Function to get document details by ID
-const getDocument = async (documentId) => {
-  try {
-    const contract = await GetEthereumContract();
-    const result = await contract.getDocument(documentId);
-    console.log(result);
-  } catch (error) {
-    console.error("Error fetching document:", error);
-  }
-};
-
-// Function to get candidates by company ID
-const getCandidatesByCompany = async (companyId) => {
-  try {
-    const contract = await GetEthereumContract();
-    const result = await contract.getCandidatesByCompany(companyId);
-    console.log(result);
-  } catch (error) {
-    console.error("Error fetching candidates:", error);
-  }
-};
-
-// Function to get documents by candidate ID
-const getDocumentsByCandidate = async (candidateId) => {
-  try {
-    const contract = await GetEthereumContract();
-    const result = await contract.getDocumentsByCandidate(candidateId);
-    console.log(result);
-  } catch (error) {
-    console.error("Error fetching documents:", error);
-  }
-};
-
-const isOwner = async (address) => {
-  console.log(address);
-  try {
-    const contract = await GetEthereumContract();
-    // console.log(contract);
-    const result = await contract.getOwner();
-    console.log(result); 
-    if (address==result){
-      return true;
+  // Function to get document details by ID
+  const getDocument = async (documentId) => {
+    try {
+      const contract = await GetEthereumContract();
+      const result = await contract.getDocument(documentId);
+      console.log(result);
+    } catch (error) {
+      console.error("Error fetching document:", error);
     }
-    else{
-      return false;
-    }
-  } catch (error) {
-    console.error("Error fetching owner:", error);
-  }
-};
-const alert_ = (indication, hash) => {
-  Swal.fire({
-    position: "center",
-    icon: indication,
-    title: hash,
-    showConfirmButton: true,
-    focusCancel: false,
-  });
-};
-return{
-  // addVerifiers,
-  isOwner,
-  replaceVerifiers,
-  removeVerifiers,
-  addCompanies,
-  removeCompanies,
-  setMaxVerifiers
-}
+  };
 
+  // Function to get candidates by company ID
+  // const getCandidatesByCompany = async (companyByAddress) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const candidateInfo = await contract.getCandidatesByCompany(companyAddress[companyByAddress].Id);
+  //     console.log(candidateInfo);
+  //     return candidateInfo;
+  //   } catch (error) {
+  //     console.error("Error fetching candidates:", error);
+  //     return [];
+  //   }
+  // };
+
+  // Function to get documents by candidate ID
+  // const getDocumentsByCandidate = async (candidateByAddress) => {
+  //   try {
+  //     const contract = await GetEthereumContract();
+  //     const documentInfo = await contract.getDocumentsByCandidate(candidateAddress[candidateByAddress].Id);
+  //     console.log(documents);
+  //     return documents;
+  //   } catch (error) {
+  //     console.error("Error fetching documents:", error);
+  //     return [];
+  //   }
+  // };
+
+  const isOwner = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.getOwner();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+  const alert_ = (indication, hash) => {
+    Swal.fire({
+      position: "center",
+      icon: indication,
+      title: hash,
+      showConfirmButton: true,
+      focusCancel: false,
+    });
+  };
+  return {
+    addVerifiers,
+    isOwner,
+    replaceVerifiers,
+    removeVerifiers,
+    addCompanies,
+    removeCompanies,
+    setMaxVerifiers,
+    addCandidates,
+    removeExistingCompany,
+    editCandidateExistingCompany,
+  };
 }
- 
