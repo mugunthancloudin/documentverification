@@ -71,40 +71,47 @@ export default function CompanyPrivilages() {
       alert_(info, "Cannot Upload Multiple files");
       return;
     }
-
-    const formData = new FormData(); // Move this outside the loop
-
-    for (const file of selectedFile) {
-      formData.append("file", file);
-
-      try {
-        const res = await axios.post(
-          "https://api.pinata.cloud/pinning/pinFileToIPFS",
-          formData,
-          {
-            maxBodyLength: "Infinity",
-            headers: {
-              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-              Authorization: `Bearer ${JWT}`,
-            },
-          }
-        );
-
-        const ipfsData = "ipfs.io/ipfs/" + res.data.IpfsHash;
-        setIpfsAddress(ipfsData);
-        alert_(success, "file successfully uploaded");
-        console.log(ipfsData);
-        // Additional logic or state updates can be done here
-
-        console.log(`File uploaded to IPFS:`, ipfsData);
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
+  
+    try {
+      const file = selectedFile[0];
+      const fileFormData = new FormData();
+      fileFormData.append("file", file);
+  
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        fileFormData,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${fileFormData._boundary}`,
+            Authorization: `Bearer ${JWT}`,
+          },
+        }
+      );
+  
+      const ipfsData = "ipfs.io/ipfs/" + res.data.IpfsHash;
+      setIpfsAddress(ipfsData);
+      alert_(success, "File successfully uploaded");
+      console.log(ipfsData);
+  
+      // Extract form data for other fields
+      const formDataForFields = {
+        // Include other form fields here
+      };
+  
+      // Additional logic or state updates can be done here
+  
+      console.log("Form data for fields:", formDataForFields);
+      console.log(`File uploaded to IPFS:`, ipfsData);
+  
+      // Clear the selected file after uploading
+      setSelectedFile([]);
+    } catch (error) {
+      console.error("Error uploading file:", error);
     }
-
-    // Clear the selected files after uploading all files
-    setSelectedFile([]);
   };
+  
+
   const alert_ = (indication, hash) => {
     Swal.fire({
       position: "center",
@@ -161,20 +168,24 @@ export default function CompanyPrivilages() {
     }
   };
 
-  //2.Function Call On Add Candidate Document Details
-  const onSubmitOfDocumentDetails = async (data) => {
-    const candidateDocumentDetails = {
-      ...data,
-      ipfsAddress,
-    };
-    try {
-      
-      console.log(candidateDocumentDetails);
-      // const doctorDetails = await blockchain.addCompanies(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+// 2. Function Call On Add Candidate Document Details
+const onSubmitOfDocumentDetails = async (data) => {
+  // Convert the Date object to a string
+  data.expairyDate = data.expairyDate.toString();
+
+  const candidateDocumentDetails = {
+    ...data,
+    ipfsAddress,
   };
+
+  try {
+    console.log(candidateDocumentDetails);
+    // const doctorDetails = await blockchain.addCompanies(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 
 
   //3.Function Call On Add Current Company Details
