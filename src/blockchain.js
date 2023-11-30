@@ -6,7 +6,7 @@ import { async } from "q";
 import Swal from "sweetalert2";
 
 const { ethereum } = window;
-const contractAddress = "0xeD7b1D87d3D7D0F0db54c9fF4eEe985a6eaeFA6c";
+const contractAddress = "0xAf72F32F0388De17DDa6a72F970167f555395336";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -165,11 +165,11 @@ export default function Blockchain() {
     }
   };
 
-  const removeCompanies = async ([ids]) => {
+  const removeCompanies = async (data) => {
     try {
-      console.log(ids);
+      console.log(data);
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCompanies([ids]);
+      const transaction = await contract.removeCompanies([data]);
       await transaction.wait();
       let hashValue = await transaction.hash;
       alert_(success, hashValue);
@@ -352,12 +352,18 @@ export default function Blockchain() {
     try {
       const contract = await GetEthereumContract();
       console.log(data);
+      let name=data.name
+      let ipfs=data.ipfsAddress
+      let candidateId=data.candidateId
+      let docType=data.docType
+      let expairyDate=data.expairyDate.toString()
+
       const transaction = await contract.addDocuments(
-        [data.name],
-        [data.ipfsAddress],
-        [data.candidateId],
-        [data.docType],
-        [data.expairyDate.toString()]
+        name,
+        ipfs,
+        candidateId,
+        docType,
+        expairyDate
       );
       await transaction.wait();
       let hashValue = await transaction.hash;
@@ -459,11 +465,15 @@ export default function Blockchain() {
       const unverifiedDocuments = [];
       const cancelledDocuments = [];
 
-      const documentCount = await contract.documents.length();
-
-      for (let i = 1; i <= documentCount; i++) {
+      const getCount = await contract.getTotalDocuments();
+      let storeCount=Number(getCount)
+      console.log(Number(getCount));
+      // const document = await contract.documents(i);
+console.log(document);
+      for (let i = 0; i < storeCount; i++) {
+        console.log(i);
         const document = await contract.documents(i);
-
+console.log(document);
         allDocuments.push(document);
 
         if (document.isVerified) {
@@ -475,12 +485,13 @@ export default function Blockchain() {
         }
       }
 console.log(allDocuments);
-      // return {
-      //   allDocuments,
-      //   verifiedDocuments,
-      //   unverifiedDocuments,
-      //   cancelledDocuments,
-      // };
+console.log(unverifiedDocuments);
+      return {
+        allDocuments,
+        verifiedDocuments,
+        unverifiedDocuments,
+        cancelledDocuments,
+      };
     } catch (error) {
       console.error("Error in categorize documents", error);
       throw error; // Propagate the error if needed
@@ -593,5 +604,7 @@ console.log(allDocuments);
     addCandidates,
     removeExistingCompany,
     editCandidateExistingCompany,
+    addDocuments,
+    getAndCategorizeAllDocuments
   };
 }
