@@ -486,10 +486,10 @@ export default function Blockchain() {
   };
 
   // Function to get candidate details by ID
-  const getCandidate = async (getCandidateId) => {
+  const getCandidate = async (candidateByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCandidate(getCandidateId);
+      const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
       console.log(result);
     } catch (error) {
       console.error("Error fetching candidate:", error);
@@ -497,10 +497,10 @@ export default function Blockchain() {
   };
 
   // Function to get company details by ID
-  const getCompany = async (getCompanyId) => {
+  const getCompany = async (companyByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCompany(getCompanyId);
+      const result = await contract.getCompany(companyAddress[companyByAddress].Id);
       console.log(result);
     } catch (error) {
       console.error("Error fetching company:", error);
@@ -518,16 +518,16 @@ export default function Blockchain() {
     }
   };
 
-  // Function to get document details by ID
-  const getDocument = async (documentId) => {
-    try {
-      const contract = await GetEthereumContract();
-      const result = await contract.getDocument(documentId);
-      console.log(result);
-    } catch (error) {
-      console.error("Error fetching document:", error);
-    }
-  };
+// Function to get document details by ID
+const getDocument = async (candidateByAddress) => {
+  try {
+    const contract = await GetEthereumContract();
+    const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
+    console.log(result);
+  } catch (error) {
+    console.error("Error fetching document:", error);
+  }
+};
 
   // Function to get candidates by company ID
   // const getCandidatesByCompany = async (companyByAddress) => {
