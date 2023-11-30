@@ -113,7 +113,7 @@ export default function CompanyPrivilages() {
   const onSubmitOfCurrentCompany  = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.editCandidateExistingCompany(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -123,7 +123,7 @@ export default function CompanyPrivilages() {
    const removeEmployeeAddress  = async (data) => {
     try {
       console.log(data);
-      // const doctorDetails = await blockchain.addCompanies(data);
+      const doctorDetails = await blockchain.removeExistingCompany(data);
     } catch (error) {
       console.error("Error:", error);
     }

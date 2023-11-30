@@ -276,14 +276,15 @@ contract Verification is Ownable {
     }
 
     function editCandidateCurrentCompany(uint256 _candidateId, address _newCurrentCompany) external {
-        uint256 _id = _candidateId;
+        uint256 _id = _candidateId-1;
         require(isCompany(), "Only company can call");
         require(candidates[_id].Id != 0, "Candidate with given ID does not exist");
 
         // If currentCompany is not set, any company can edit it
-        if (candidates[_id].currentCompany != address(0)) {
-            require(candidates[_id].currentCompany == msg.sender, "You do not have permission to edit currentCompany for this candidate");
-        }
+        // if (candidates[_id].currentCompany != address(0)) {
+        //     require(candidates[_id].currentCompany == msg.sender, "You do not have permission to edit currentCompany for this candidate");
+        // }
+        require(candidates[_id].currentCompany == address(0), "As the company has been already assigned, You cannot over write current company details");
 
         candidates[_id].currentCompany = _newCurrentCompany;
 
@@ -397,22 +398,16 @@ function getCompany(uint256 _companyId) external view returns (uint256, address,
     );
 }
 
-function getCandidate(uint256 _id) public view returns (string memory, uint256, string memory, string memory, uint256) {
+function getCandidate(uint256 _id) public view returns (Candidate memory) {
     require(_id <= candidates.length, "Invalid candidate ID");
     uint256 arrayIndex = _id - 1;
 
-    Candidate storage candidate = candidates[arrayIndex];
+    Candidate memory candidate = candidates[arrayIndex];
 
     // Check if the candidate exists
     require(candidate.Id != 0, "Candidate with given ID does not exist");
 
-    return (
-        candidate.name,
-        candidate.Id,
-        candidate.location,
-        candidate.email,
-        candidate.phoneNumber
-    );
+    return candidate;
 }
 
 function getDocuments(uint256 _candidateId) external view returns (Document[] memory) {
