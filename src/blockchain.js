@@ -129,7 +129,7 @@ export default function Blockchain() {
   const addCompanies = async (data) => {
     try {
 
-console.log(data);
+        console.log(data);
         const contract = await GetEthereumContract();
         const transaction = await contract.addCompanies(
           [data.walletAddress],
@@ -444,10 +444,10 @@ const addDocuments = async (data) => {
   };
 
   // Function to get candidate details by ID
-  const getCandidate = async (getCandidateId) => {
+  const getCandidate = async (candidateByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCandidate(getCandidateId);
+      const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
       console.log(result);
     } catch (error) {
       console.error("Error fetching candidate:", error);
@@ -455,10 +455,10 @@ const addDocuments = async (data) => {
   };
 
   // Function to get company details by ID
-  const getCompany = async (getCompanyId) => {
+  const getCompany = async (companyByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCompany(getCompanyId);
+      const result = await contract.getCompany(companyAddress[companyByAddress].Id);
       console.log(result);
     } catch (error) {
       console.error("Error fetching company:", error);
@@ -477,10 +477,10 @@ const addDocuments = async (data) => {
   };
 
 // Function to get document details by ID
-const getDocument = async (documentId) => {
+const getDocument = async (candidateByAddress) => {
   try {
     const contract = await GetEthereumContract();
-    const result = await contract.getDocument(documentId);
+    const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
     console.log(result);
   } catch (error) {
     console.error("Error fetching document:", error);
@@ -506,8 +506,8 @@ const getDocumentsByCandidate = async (candidateByAddress) => {
   try {
     const contract = await GetEthereumContract();
     const documentInfo = await contract.getDocumentsByCandidate(candidateAddress[candidateByAddress].Id);
-    console.log(documents);
-    return documents;
+    console.log(documentInfo);
+    return documentInfo;
   } catch (error) {
     console.error("Error fetching documents:", error);
     return [];
