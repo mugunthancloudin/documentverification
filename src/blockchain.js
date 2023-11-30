@@ -418,7 +418,7 @@ export default function Blockchain() {
     }
   };
 
-  const cancelDocuments = async ([documentIds], [isCancelled]) => {
+  const cancelDocuments = async ([documentIds]) => {
     try {
       const contract = await GetEthereumContract();
       const isCancelled = true;
@@ -486,10 +486,11 @@ export default function Blockchain() {
   };
 
   // Function to get candidate details by ID
-  const getCandidate = async (candidateByAddress) => {
+  const getCandidate = async (data) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
+      let mappingData = await contract.candidateAddress(data);
+      const result = await contract.getCandidate(mappingData);
       console.log(result);
     } catch (error) {
       console.error("Error fetching candidate:", error);
@@ -497,10 +498,11 @@ export default function Blockchain() {
   };
 
   // Function to get company details by ID
-  const getCompany = async (companyByAddress) => {
+  const getCompany = async (data) => {
     try {
       const contract = await GetEthereumContract();
-      const result = await contract.getCompany(companyAddress[companyByAddress].Id);
+      let mappingData = await contract.companyAddress(data);
+      const result = await contract.getCompany(mappingData);
       console.log(result);
     } catch (error) {
       console.error("Error fetching company:", error);
@@ -519,10 +521,11 @@ export default function Blockchain() {
   };
 
 // Function to get document details by ID
-const getDocument = async (candidateByAddress) => {
+const getDocument = async (data) => {
   try {
     const contract = await GetEthereumContract();
-    const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
+    let mappingData = await contract.candidateAddress(data);
+    const result = await contract.getDocument(mappingData);
     console.log(result);
   } catch (error) {
     console.error("Error fetching document:", error);
@@ -530,30 +533,32 @@ const getDocument = async (candidateByAddress) => {
 };
 
   // Function to get candidates by company ID
-  // const getCandidatesByCompany = async (companyByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const candidateInfo = await contract.getCandidatesByCompany(companyAddress[companyByAddress].Id);
-  //     console.log(candidateInfo);
-  //     return candidateInfo;
-  //   } catch (error) {
-  //     console.error("Error fetching candidates:", error);
-  //     return [];
-  //   }
-  // };
+  const getCandidatesByCompany = async (data) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.companyAddress(data);
+      const candidateInfo = await contract.getCandidatesByCompany(mappingData);
+      console.log(candidateInfo);
+      return candidateInfo;
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      return [];
+    }
+  };
 
   // Function to get documents by candidate ID
-  // const getDocumentsByCandidate = async (candidateByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const documentInfo = await contract.getDocumentsByCandidate(candidateAddress[candidateByAddress].Id);
-  //     console.log(documents);
-  //     return documents;
-  //   } catch (error) {
-  //     console.error("Error fetching documents:", error);
-  //     return [];
-  //   }
-  // };
+  const getDocumentsByCandidate = async (data) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.candidateAddress(data);
+      const documentInfo = await contract.getDocumentsByCandidate(mappingData);
+      console.log(documentInfo);
+      return documentInfo;
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      return [];
+    }
+  };
 
   const isOwner = async (address) => {
     console.log(address);
@@ -591,5 +596,6 @@ const getDocument = async (candidateByAddress) => {
     addCandidates,
     removeExistingCompany,
     editCandidateExistingCompany,
+    getCandidatesByCompany,
   };
 }
