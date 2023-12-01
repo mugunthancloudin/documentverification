@@ -73,20 +73,15 @@ export default function Blockchain() {
     }
   };
 
-  const replaceVerifiers = async (oldVerifier, newVerifier) => {
+  const replaceVerifiers = async (oldVerifiers, newVerifiers) => {
     try {
-      let oldVerifiers = [oldVerifier];
-      let newVerifiers = [newVerifier];
       const contract = await GetEthereumContract();
-      const transaction = await contract.replaceVerifiers(
-        oldVerifiers,
-        newVerifiers
-      );
+      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
       let hashValue = await transaction.hash;
       alert_(success, hashValue);
       console.log(`Verifiers replaced successfully`);
-    } catch (error) {
+    }catch (error) {
       // console.log(error);
       const errorMessage = error.message;
 
@@ -585,6 +580,57 @@ const getDocument = async (data) => {
   }
   
 
+  const isCompany = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCompany();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCandidate = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCandidate();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isVerifier = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isVerifier();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
   const isOwner = async (address) => {
     console.log(address);
     try {
@@ -665,6 +711,9 @@ const getDocument = async (data) => {
   return {
     addVerifiers,
     isOwner,
+    isCompany,
+    isCandidate,
+    isVerifier,
     replaceVerifiers,
     removeVerifiers,
     addCompanies,
