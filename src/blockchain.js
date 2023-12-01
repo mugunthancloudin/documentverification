@@ -73,20 +73,15 @@ export default function Blockchain() {
     }
   };
 
-  const replaceVerifiers = async (oldVerifier, newVerifier) => {
+  const replaceVerifiers = async (oldVerifiers, newVerifiers) => {
     try {
-      let oldVerifiers = [oldVerifier];
-      let newVerifiers = [newVerifier];
       const contract = await GetEthereumContract();
-      const transaction = await contract.replaceVerifiers(
-        oldVerifiers,
-        newVerifiers
-      );
+      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
       let hashValue = await transaction.hash;
       alert_(success, hashValue);
       console.log(`Verifiers replaced successfully`);
-    } catch (error) {
+    }catch (error) {
       // console.log(error);
       const errorMessage = error.message;
 

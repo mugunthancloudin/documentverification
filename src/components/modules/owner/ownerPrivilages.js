@@ -144,13 +144,16 @@ export default function OwnerPrivilages() {
    //3.Function Call On Replace Verifier Address
    const replaceVerifierAddress = async (data) => {
     try {
+      console.log(data.existingWalletAddress);
+      console.log(data.newWalletAddress);
       const removedOwner = await blockchain.replaceVerifiers(
-        data.verifierAddressToRemove
+        [data.existingWalletAddress],
+        [data.newWalletAddress]
       );
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+};
 
   //4.Function Call On Add Company Details
   const onSubmitOfCompanyDetails = async (data) => {
