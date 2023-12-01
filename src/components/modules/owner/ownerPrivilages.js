@@ -166,10 +166,10 @@ export default function OwnerPrivilages() {
   const removeCompanyAddress = async (data) => {
     try {
       console.log(data);
-      // const removedCompany = await blockchain.removeCompanies(
-      //   data.companyAddressToRemove
-      // );
-      const data_= await blockchain.getAndCategorizeAllDocuments()
+      const removedCompany = await blockchain.removeCompanies(
+        data.companyAddressToRemove
+      );
+      // const data_= await blockchain.getAndCategorizeAllDocuments()
     } catch (error) {
       console.error("Error:", error);
     }

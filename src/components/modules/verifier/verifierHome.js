@@ -11,9 +11,15 @@ export default function VerifierHome() {
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [documentForVerification,setDocumentForVerification] = useState();
-  console.log(documentForVerification);
+  const [documentForVerification, setDocumentForVerification] = useState();
+  const [unverifiedDocuments, setUnverifiedDocuments] = useState();
+  const [verifiedDocuments, setVerifiedDocuments] = useState();
+  const [cancelledDocuments, setCancelledDocuments] = useState();
 
+  // console.log(documentForVerification);
+  // console.log(unverifiedDocuments);
+  // console.log(verifiedDocuments);
+  // console.log(cancelledDocuments);
 
   const handleVerification = (item) => {
     setSelectedItem(item);
@@ -42,7 +48,6 @@ export default function VerifierHome() {
           let personal = await blockchain.getAndCategorizeAllDocuments();
           console.log(personal);
           setDocumentForVerification(personal);
-          
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -53,6 +58,14 @@ export default function VerifierHome() {
 
     fetchData();
   }, [isConnected]);
+
+  useEffect(() => {
+    if (documentForVerification) {
+      setUnverifiedDocuments(documentForVerification.unverifiedDocuments);
+      setVerifiedDocuments(documentForVerification.verifiedDocuments);
+      setCancelledDocuments(documentForVerification.cancelledDocuments);
+    }
+  }, [documentForVerification]);
 
   return (
     <>
@@ -76,8 +89,24 @@ export default function VerifierHome() {
             </div>
             <div className="col-lg-6">&nbsp;</div>
           </div>
-          {isConnected ? <VerificationDashboard /> : null}
         </div>
+      </div>
+      <div className="container-fluid">
+      <div className="row">
+            {isConnected
+              ? unverifiedDocuments &&
+                verifiedDocuments &&
+                cancelledDocuments && (
+                  <VerificationDashboard
+                    documentDetails={{
+                      unverified: unverifiedDocuments,
+                      verified: verifiedDocuments,
+                      canceled: cancelledDocuments,
+                    }}
+                  />
+                )
+              : null}
+          </div>
       </div>
     </>
   );

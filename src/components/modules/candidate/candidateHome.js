@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import "./candidate.css";
 import { useAccount } from "wagmi";
 import Blockchain from "../../../blockchain";
@@ -7,6 +7,9 @@ import CandidatePrivilages from "./candidatePrivilages";
 export default function CandidateHome() {
   const { address, isConnected } = useAccount();
   const blockchain = Blockchain();
+
+  const [candidateDetails, setCandidateDetails] = useState();
+  console.log(candidateDetails);
 
   useEffect(() => {
     // Scroll to the second primary div when wallet is connected
@@ -17,7 +20,25 @@ export default function CandidateHome() {
       }
     }
   }, [isConnected]);
-  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isConnected === true) {
+        try {
+          let personal = await blockchain.getDocumentsByCandidate(address);
+          console.log(personal);
+          setCandidateDetails(personal);
+        } catch (error) {
+          console.error("Error fetching data:", error); 
+        }
+      } else {
+        console.log("Not a candidate");
+      }
+    };
+
+    fetchData();
+  }, [isConnected]);
+
   return (
     <>
       <div className="container-fluid candidateBg">
@@ -32,20 +53,22 @@ export default function CandidateHome() {
               </p>
               <hr className="mt-2" />
               <h5 className="mt-2">Connect to verify the certificates!</h5>
-              <div className="wagmiBtn"  id="secondDiv">
+              <div className="wagmiBtn" id="secondDiv">
                 <w3m-button />
               </div>
             </div>
           </div>
         </div>
       </div>
-      {isConnected ? (
-        <div className="container-fluid" >
-          <div className="container">
-            <CandidatePrivilages/>
-          </div>
-        </div>
-      ) : (null)}
+      <div className="container-fluid">
+        {isConnected ? (
+       
+            
+              <CandidatePrivilages candidateDocs={candidateDetails} />
+            
+         
+        ) : null}
+       </div>
     </>
   );
 }

@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { async } from "q";
 import Swal from "sweetalert2";
+import { error, log } from "console";
 
 const { ethereum } = window;
-const contractAddress = "0xAf72F32F0388De17DDa6a72F970167f555395336";
+const contractAddress = "0x6172CcA0FD742CE43821E231f85Ef0972B7911F7";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -46,10 +47,9 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (data_) => {
+  const addVerifiers = async (data) => {
     try {
-      let data = [data_];
-      console.log(data);
+      let data = [data];
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data);
       await transaction.wait();
@@ -165,11 +165,11 @@ export default function Blockchain() {
     }
   };
 
-  const removeCompanies = async (data) => {
+  const removeCompanies = async ([ids]) => {
     try {
-      console.log(data);
+      console.log(ids);
       const contract = await GetEthereumContract();
-      const transaction = await contract.removeCompanies([data]);
+      const transaction = await contract.removeCompanies([ids]);
       await transaction.wait();
       let hashValue = await transaction.hash;
       alert_(success, hashValue);
@@ -410,13 +410,13 @@ export default function Blockchain() {
     }
   };
 
-  const verifyDocuments = async ([documentIds]) => {
+  const verifyDocuments = async (documentId) => {
     try {
       const contract = await GetEthereumContract();
       const isCancelled = false;
-      const transaction = await contract.verifyDocuments(
-        [documentIds],
-        [isCancelled]
+      const transaction = await contract.verifyDocument(
+        documentId,
+        isCancelled
       );
       await transaction.wait();
       console.log("Documents verified successfully");
@@ -426,13 +426,13 @@ export default function Blockchain() {
     }
   };
 
-  const cancelDocuments = async ([documentIds], [isCancelled]) => {
+  const cancelDocuments = async (documentId) => {
     try {
       const contract = await GetEthereumContract();
       const isCancelled = true;
-      const transaction = await contract.verifyDocuments(
-        [documentIds],
-        [isCancelled]
+      const transaction = await contract.verifyDocument(
+        documentId,
+        isCancelled
       );
       await transaction.wait();
       let hashValue = await transaction.hash;
@@ -469,11 +469,11 @@ export default function Blockchain() {
       let storeCount=Number(getCount)
       console.log(Number(getCount));
       // const document = await contract.documents(i);
-console.log(document);
+// console.log(document);
       for (let i = 0; i < storeCount; i++) {
-        console.log(i);
+        // console.log(i);
         const document = await contract.documents(i);
-console.log(document);
+// console.log(document);
         allDocuments.push(document);
 
         if (document.isVerified) {
@@ -484,8 +484,8 @@ console.log(document);
           unverifiedDocuments.push(document);
         }
       }
-console.log(allDocuments);
-console.log(unverifiedDocuments);
+// console.log(allDocuments);
+// console.log(unverifiedDocuments);
       return {
         allDocuments,
         verifiedDocuments,
@@ -499,26 +499,28 @@ console.log(unverifiedDocuments);
   };
 
   // Function to get candidate details by ID
-  // const getCandidate = async (candidateByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const result = await contract.getCandidate(candidateAddress[candidateByAddress].Id);
-  //     console.log(result);
-  //   } catch (error) {
-  //     console.error("Error fetching candidate:", error);
-  //   }
-  // };
+  const getCandidate = async (data) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.candidateAddress(data);
+      const result = await contract.getCandidate(mappingData);
+      console.log(result);
+    } catch (error) {
+      console.error("Error fetching candidate:", error);
+    }
+  };
 
   // Function to get company details by ID
-  // const getCompany = async (companyByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const result = await contract.getCompany(companyAddress[companyByAddress].Id);
-  //     console.log(result);
-  //   } catch (error) {
-  //     console.error("Error fetching company:", error);
-  //   }
-  // };
+  const getCompany = async (data) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.companyAddress(data);
+      const result = await contract.getCompany(mappingData);
+      console.log(result);
+    } catch (error) {
+      console.error("Error fetching company:", error);
+    }
+  };
 
   // Function to get list of verifiers
   const getVerifiers = async () => {
@@ -532,41 +534,56 @@ console.log(unverifiedDocuments);
   };
 
 // Function to get document details by ID
-// const getDocument = async (candidateByAddress) => {
-//   try {
-//     const contract = await GetEthereumContract();
-//     const result = await contract.getDocument(candidateAddress[candidateByAddress].Id);
-//     console.log(result);
-//   } catch (error) {
-//     console.error("Error fetching document:", error);
-//   }
-// };
+const getDocument = async (data) => {
+  try {
+    const contract = await GetEthereumContract();
+    let mappingData = await contract.candidateAddress(data);
+    const result = await contract.getDocument(mappingData);
+    console.log(result);
+  } catch (error) {
+    console.error("Error fetching document:", error);
+  }
+};
 
   // Function to get candidates by company ID
-  // const getCandidatesByCompany = async (companyByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const candidateInfo = await contract.getCandidatesByCompany(companyAddress[companyByAddress].Id);
-  //     console.log(candidateInfo);
-  //     return candidateInfo;
-  //   } catch (error) {
-  //     console.error("Error fetching candidates:", error);
-  //     return [];
-  //   }
-  // };
+  const getCandidatesByCompany = async (companyByAddress) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.companyAddress(companyByAddress);
+      const candidateInfo = await contract.getCandidatesByCompany(mappingData);
+      console.log(candidateInfo);
+      return candidateInfo;
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      return [];
+    }
+  };
 
   // Function to get documents by candidate ID
-  // const getDocumentsByCandidate = async (candidateByAddress) => {
-  //   try {
-  //     const contract = await GetEthereumContract();
-  //     const documentInfo = await contract.getDocumentsByCandidate(candidateAddress[candidateByAddress].Id);
-  //     console.log(documents);
-  //     return documents;
-  //   } catch (error) {
-  //     console.error("Error fetching documents:", error);
-  //     return [];
-  //   }
-  // };
+  const getDocumentsByCandidate = async (candidateByAddress) => {
+    try {
+      const contract = await GetEthereumContract();
+      let mappingData = await contract.candidateAddress(candidateByAddress);
+      const documentInfo = await contract.getDocumentsByCandidate(mappingData);
+      console.log(documentInfo);
+      return documentInfo;
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      return [];
+    }
+  };
+
+  const getAllCompanies = async () => {
+    try {
+      const contract = await GetEthereumContract();
+      const result = await contract.getAllCompanies(); // or await contract.getCompanies();
+      return result;
+    } catch (error) {
+      console.error("Error getting all companies", error);
+      return [];
+    }
+  }
+  
 
   const isOwner = async (address) => {
     console.log(address);
@@ -574,6 +591,57 @@ console.log(unverifiedDocuments);
       const contract = await GetEthereumContract();
       // console.log(contract);
       const result = await contract.getOwner();
+      console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCompany = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCompany();
+      console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCandidate = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCandidate();
+      console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isVerifier = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isVerifier();
       console.log(result);
       if (address == result) {
         return true;
@@ -584,6 +652,7 @@ console.log(unverifiedDocuments);
       console.error("Error fetching owner:", error);
     }
   };
+
   const alert_ = (indication, hash) => {
     Swal.fire({
       position: "center",
@@ -604,7 +673,16 @@ console.log(unverifiedDocuments);
     addCandidates,
     removeExistingCompany,
     editCandidateExistingCompany,
+    getCandidatesByCompany,
+    getDocumentsByCandidate,
+    getAndCategorizeAllDocuments,
+    verifyDocuments,
+    cancelDocuments,
+    getAllCompanies,
     addDocuments,
-    getAndCategorizeAllDocuments
+    isCompany,
+    isVerifier,
+    isCandidate,
   };
+  
 }

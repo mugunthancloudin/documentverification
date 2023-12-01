@@ -3,33 +3,18 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import BigNumber from "bignumber.js";
+import Blockchain from "../../../blockchain";
 import "./verifier.css";
 
-export default function VerificationDashboard() {
-
-  const [data, setData] = useState([
-    {
-      sno: 1,
-      candidateId: "C001",
-      documentId: "D001",
-      documentName: "Resume",
-      documentType: "PDF",
-      expiryDate: "2023-12-31",
-      cid: "CID001",
-      verify: "Pending",
-    },
-    {
-      sno: 2,
-      candidateId: "C002",
-      documentId: "D002",
-      documentName: "Cover Letter",
-      documentType: "Word",
-      expiryDate: "2023-11-30",
-      cid: "CID002",
-      verify: "Approved",
-    },
-    // Add more data entries as needed
-  ]);
+export default function VerificationDashboard(props) {
+  const blockchain = Blockchain();
+  const unVerifiedDocument = props.documentDetails.unverified;
+  console.log(unVerifiedDocument);
+  const verifiedDocument = props.documentDetails.verified;
+  console.log(verifiedDocument);
+  const canceledDocument = props.documentDetails.canceled;
+  console.log(canceledDocument);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -43,18 +28,27 @@ export default function VerificationDashboard() {
     setShowModal(false);
   };
 
-  const handleConfirmVerification = () => {
-    // Handle the verification logic here
-    const updatedData = data.map((dataItem) =>
-      dataItem.sno === selectedItem.sno
-        ? { ...dataItem, verify: "Verified" }
-        : dataItem
-    );
-    setData(updatedData);
-    setShowModal(false);
+ //confirm Document Verification
+  const handleConfirmVerification = async (documentId) => {
+    try {
+      console.log(documentId);
+      const verifiedDocument = await blockchain.verifyDocuments(documentId);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
- 
+  //Cancel Document Verification
+  const handleCancelVerification = async (documentId) => {
+    try {
+      console.log(documentId);
+      const verifiedDocument = await blockchain.cancelDocuments(documentId);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <>
@@ -86,57 +80,95 @@ export default function VerificationDashboard() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
-                              <tr key={item.sno}>
-                                <th scope="row">{item.sno}</th>
-                                <td>{item.candidateId}</td>
-                                <td>{item.documentId}</td>
-                                <td>{item.documentName}</td>
-                                <td>{item.documentType}</td>
-                                <td>{item.expiryDate}</td>
-                                <td>{item.cid}</td>
-                                <td>
-                                  <button
-                                    className="btn btn-success"
-                                    onClick={() => handleVerification(item)}
-                                  >
-                                    click
-                                  </button>
-                                  <Modal
-                                    show={showModal}
-                                    onHide={handleCloseModal}
-                                  >
-                                    <Modal.Header closeButton>
-                                      <Modal.Title>
-                                        Verification Confirmation
-                                      </Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                      <p>Document Id</p>
-                                      <p>Name</p>
-                                      <p>Document Type</p>
-                                      <p>Candidate Id</p>
-                                      <p>Expairy Date</p>
-                                      <p>CID</p>
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                      <Button
-                                        variant="secondary"
-                                        onClick={handleCloseModal}
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        variant="success"
-                                        onClick={handleConfirmVerification}
-                                      >
-                                        Verify
-                                      </Button>
-                                    </Modal.Footer>
-                                  </Modal>
-                                </td>
-                              </tr>
-                            ))}
+                            {unVerifiedDocument &&
+                              unVerifiedDocument.map((item, index) => (
+                                <tr key={item.sno}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>{item.candidateId.toString()}</td>
+                                  <td>{item.id.toString()}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.typeOfDocument}</td>
+                                  <td>{new Date(item.expirationDate).toLocaleDateString()}</td>
+                                  <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.cid}</td>
+                                  <td>
+                                    <button
+                                      className="btn btn-success"
+                                      onClick={() => handleVerification(item)}
+                                    >
+                                      click
+                                    </button>
+                                    <Modal
+                                      show={showModal}
+                                      onHide={handleCloseModal}
+                                    >
+                                      <Modal.Header closeButton>
+                                        <Modal.Title>
+                                          Verification Confirmation
+                                        </Modal.Title>
+                                      </Modal.Header>
+                                      <Modal.Body>
+                                        <p>
+                                          Document Id:{" "}
+                                          {selectedItem?.id?.toString()}
+                                        </p>
+                                        <p>
+                                          Name: {selectedItem?.name?.toString()}
+                                        </p>
+                                        <p>
+                                          Document Type:{" "}
+                                          {selectedItem?.typeOfDocument?.toString()}
+                                        </p>
+                                        <p>
+                                          Candidate Id:{" "}
+                                          {selectedItem?.candidateId?.toString()}
+                                        </p>
+                                        <p>
+                                          Expiry Date:{" "}
+                                          {selectedItem?.expirationDate instanceof
+                                          BigNumber
+                                            ? selectedItem?.expirationDate?.toString()
+                                            : selectedItem?.expirationDate}
+                                        </p>
+                                        <p>
+                                          CID:{" "}
+                                          <a
+                                            href={`http://${selectedItem?.cid?.toString()}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            Document to verify
+                                          </a>
+                                        </p>
+                                      </Modal.Body>
+                                      <Modal.Footer>
+                                        <Button
+                                          variant="secondary"
+                                          onClick={() =>
+                                            handleCancelVerification(
+                                              selectedItem?.id
+                                            )
+                                          }
+                                        >
+                                          Cancel
+                                        </Button>
+
+                                        <Button
+                                          variant="success"
+                                          onClick={() =>
+                                            handleConfirmVerification(
+                                              selectedItem?.id
+                                            )
+                                          }
+                                        >
+                                          Verify
+                                        </Button>
+
+                      
+                                      </Modal.Footer>
+                                    </Modal>
+                                  </td>
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>
@@ -145,7 +177,7 @@ export default function VerificationDashboard() {
                 </div>
               </Tab>
               <Tab eventKey="profile" title="Verified">
-              <div className="container">
+                <div className="container">
                   <div className="row">
                     <div className="col-lg-12">
                       <div className="table-responsive">
@@ -162,18 +194,19 @@ export default function VerificationDashboard() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
-                              <tr key={item.sno}>
-                                <th scope="row">{item.sno}</th>
-                                <td>{item.candidateId}</td>
-                                <td>{item.documentId}</td>
-                                <td>{item.documentName}</td>
-                                <td>{item.documentType}</td>
-                                <td>{item.expiryDate}</td>
-                                <td>{item.cid}</td>
-                               
-                              </tr>
-                            ))}
+                            {verifiedDocument &&
+                              verifiedDocument.map((item,index) => (
+                                <tr key={item.sno}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>{item.candidateId.toString()}</td>
+                                  <td>{item.id.toString()}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.typeOfDocument}</td>
+                                  <td>{new Date(item.expirationDate).toLocaleDateString()}</td>
+                                  <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.cid}</td>
+                                  
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>
@@ -181,8 +214,8 @@ export default function VerificationDashboard() {
                   </div>
                 </div>
               </Tab>
-              <Tab eventKey="longer-tab"  title="Canceled">
-              <div className="container">
+              <Tab eventKey="longer-tab" title="Canceled">
+                <div className="container">
                   <div className="row">
                     <div className="col-lg-12">
                       <div className="table-responsive">
@@ -199,18 +232,18 @@ export default function VerificationDashboard() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
-                              <tr key={item.sno}>
-                                <th scope="row">{item.sno}</th>
-                                <td>{item.candidateId}</td>
-                                <td>{item.documentId}</td>
-                                <td>{item.documentName}</td>
-                                <td>{item.documentType}</td>
-                                <td>{item.expiryDate}</td>
-                                <td>{item.cid}</td>
-                               
-                              </tr>
-                            ))}
+                            {canceledDocument &&
+                              canceledDocument.map((item,index) => (
+                                <tr key={item.sno}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>{item.candidateId.toString()}</td>
+                                  <td>{item.id.toString()}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.typeOfDocument}</td>
+                                  <td>{new Date(item.expirationDate).toLocaleDateString()}</td>
+                                  <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.cid}</td>
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>

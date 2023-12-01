@@ -64,15 +64,15 @@ contract Verification is Ownable {
     Candidate[] public candidates;
     Document[] public documents;
 
-    function isCandidate() internal view returns (bool) {
+    function isCandidate() public view returns (bool) {
         return candidateAddress[msg.sender] != 0;
     }
 
-    function isCompany() internal view returns (bool) {
+    function isCompany() public view returns (bool) {
         return companyAddress[msg.sender] != 0;
     }
 
-    function isVerifier() internal view returns (bool) {
+    function isVerifier() public view returns (bool) {
         return isVerifier(msg.sender);
     }
 
@@ -393,7 +393,7 @@ contract Verification is Ownable {
         return companyAddress[msg.sender];
     }
 
-function getCompany(uint256 _companyId) external view returns (uint256, address, string memory, string memory, uint256, string memory, string memory) {
+function getCompany(uint256 _companyId) external view returns (Company memory) {
     require(_companyId <= companies.length, "Invalid company ID");
     uint256 arrayIndex = _companyId - 1;
 
@@ -403,13 +403,7 @@ function getCompany(uint256 _companyId) external view returns (uint256, address,
     require(company.Id != 0, "Company with given ID does not exist");
 
     return (
-        company.Id,
-        company.address_,
-        company.name,
-        company.location,
-        company.phoneNumber,
-        company.licenseNumber,
-        company.email
+        company
     );
 }
 
@@ -443,7 +437,7 @@ function getDocuments(uint256 _candidateId) external view returns (Document[] me
         result[i] = documents[documentIds[i]];
     }
 
-    return result;
+    return documents;
 }
 
 function getDocumentsByCandidate(uint256 _candidateId) external view returns (Document[] memory) {
@@ -463,7 +457,7 @@ function getDocumentsByCandidate(uint256 _candidateId) external view returns (Do
         result[i] = documents[documentIds[i] - 1];
     }
 
-    return result;
+    return documents;
 }
 
 function getCandidatesByCompany(uint256 _companyId) external view returns (Candidate[] memory) {
@@ -478,7 +472,7 @@ function getCandidatesByCompany(uint256 _companyId) external view returns (Candi
         result[i] = candidates[candidateIds[i] - 1];
     }
 
-    return result;
+    return candidates;
 }
 
  function getTotalCompanies() public view returns (uint256) {
@@ -492,6 +486,18 @@ function getCandidatesByCompany(uint256 _companyId) external view returns (Candi
     function getTotalDocuments() public view returns (uint256) {
         return documents.length;
     }
+
+    function getAllCompanies() public view returns (Company[] memory) {
+    return companies;
+}
+
+function getAllCandidates() public view returns (Candidate[] memory) {
+    return candidates;
+}
+
+function getAllDocuments() public view returns (Document[] memory) {
+    return documents;
+} 
 
 function getVerifiers() public view onlyOwner returns (address[] memory) {
     return verifiers;

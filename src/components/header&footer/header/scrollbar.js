@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Link } from "react-scroll";
-import brandLogo from "../../../assets/header/verificationLogo.jpg";
+import brandLogo from "../../../assets/header/logo.png";
 import { Navbar, Nav, Button, NavLink, NavbarToggle } from "react-bootstrap";
 import { useAccount } from "wagmi";
 
