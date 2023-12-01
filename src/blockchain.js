@@ -563,6 +563,57 @@ console.log(unverifiedDocuments);
   //   }
   // };
 
+  const isCompany = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCompany();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCandidate = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCandidate();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isVerifier = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isVerifier();
+      console.log(result);
+      if (address == result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
   const isOwner = async (address) => {
     console.log(address);
     try {
@@ -591,6 +642,9 @@ console.log(unverifiedDocuments);
   return {
     addVerifiers,
     isOwner,
+    isCompany,
+    isCandidate,
+    isVerifier,
     replaceVerifiers,
     removeVerifiers,
     addCompanies,
