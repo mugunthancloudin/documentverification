@@ -11,18 +11,36 @@ export default function CompanyHome() {
   const blockchain = Blockchain();
   const [checkCompany, setCheckCompany] = useState();
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (isConnected == true) {
+  //         let C = await blockchain.isCompany(address);
+  //         console.log(iscompany);
+  //         setCheckCompany(iscompany);
+  //       }
+  //     } catch (error) {
+  //       // Handle errors
+  //     }
+  //   }
+  //   fetchData();
+  // }, [isConnected]);
+
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (isConnected) {
+    const fetchData = async () => {
+      if (isConnected === true) {
+        try {
           let iscompany = await blockchain.isCompany(address);
           console.log(iscompany);
           setCheckCompany(iscompany);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        // Handle errors
+      } else {
+        console.log("Not a patient");
       }
-    }
+    };
+
     fetchData();
   }, [isConnected]);
   return (

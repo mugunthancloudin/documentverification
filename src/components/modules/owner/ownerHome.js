@@ -8,6 +8,7 @@ export default function OwnerHome() {
   const { address, isConnected } = useAccount();
   const blockchain = Blockchain();
   const [checkOwner, setCheckOwner] = useState();
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -38,7 +39,7 @@ export default function OwnerHome() {
             </div>
           </div>
           <div className="row mt-5">
-          {!checkOwner ? <OwnerPrivilages /> : null}
+          {checkOwner ? <OwnerPrivilages /> : null}
           </div>
         </div>
       </div>
