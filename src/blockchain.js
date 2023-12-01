@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { async } from "q";
 import Swal from "sweetalert2";
+import { error, log } from "console";
 
 const { ethereum } = window;
-const contractAddress = "0xeD7b1D87d3D7D0F0db54c9fF4eEe985a6eaeFA6c";
+const contractAddress = "0xf3660a55d54B70c1c8B8dA6606A528feB7891a10";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -402,13 +403,13 @@ export default function Blockchain() {
     }
   };
 
-  const verifyDocuments = async ([documentIds]) => {
+  const verifyDocuments = async (documentId) => {
     try {
       const contract = await GetEthereumContract();
       const isCancelled = false;
-      const transaction = await contract.verifyDocuments(
-        [documentIds],
-        [isCancelled]
+      const transaction = await contract.verifyDocument(
+        documentId,
+        isCancelled
       );
       await transaction.wait();
       console.log("Documents verified successfully");
@@ -418,13 +419,13 @@ export default function Blockchain() {
     }
   };
 
-  const cancelDocuments = async ([documentIds]) => {
+  const cancelDocuments = async (documentId) => {
     try {
       const contract = await GetEthereumContract();
       const isCancelled = true;
-      const transaction = await contract.verifyDocuments(
-        [documentIds],
-        [isCancelled]
+      const transaction = await contract.verifyDocument(
+        documentId,
+        isCancelled
       );
       await transaction.wait();
       let hashValue = await transaction.hash;
@@ -473,12 +474,16 @@ export default function Blockchain() {
         }
       }
 
-      return {
-        allDocuments,
-        verifiedDocuments,
-        unverifiedDocuments,
-        cancelledDocuments,
-      };
+      console.log(allDocuments);
+      console.log(verifiedDocuments);
+      console.log(unverifiedDocuments);
+      console.log(allDocuments);
+      // return {
+      //   allDocuments,
+      //   verifiedDocuments,
+      //   unverifiedDocuments,
+      //   cancelledDocuments,  
+      // };
     } catch (error) {
       console.error("Error in categorize documents", error);
       throw error; // Propagate the error if needed
@@ -533,10 +538,10 @@ const getDocument = async (data) => {
 };
 
   // Function to get candidates by company ID
-  const getCandidatesByCompany = async (data) => {
+  const getCandidatesByCompany = async (companyByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      let mappingData = await contract.companyAddress(data);
+      let mappingData = await contract.companyAddress(companyByAddress);
       const candidateInfo = await contract.getCandidatesByCompany(mappingData);
       console.log(candidateInfo);
       return candidateInfo;
@@ -547,10 +552,10 @@ const getDocument = async (data) => {
   };
 
   // Function to get documents by candidate ID
-  const getDocumentsByCandidate = async (data) => {
+  const getDocumentsByCandidate = async (candidateByAddress) => {
     try {
       const contract = await GetEthereumContract();
-      let mappingData = await contract.candidateAddress(data);
+      let mappingData = await contract.candidateAddress(candidateByAddress);
       const documentInfo = await contract.getDocumentsByCandidate(mappingData);
       console.log(documentInfo);
       return documentInfo;
@@ -559,6 +564,18 @@ const getDocument = async (data) => {
       return [];
     }
   };
+
+  const getAllCompanies = async () => {
+    try {
+      const contract = await GetEthereumContract();
+      const result = await contract.getAllCompanies(); // or await contract.getCompanies();
+      return result;
+    } catch (error) {
+      console.error("Error getting all companies", error);
+      return [];
+    }
+  }
+  
 
   const isOwner = async (address) => {
     console.log(address);
@@ -576,6 +593,7 @@ const getDocument = async (data) => {
       console.error("Error fetching owner:", error);
     }
   };
+
   const alert_ = (indication, hash) => {
     Swal.fire({
       position: "center",
@@ -597,5 +615,11 @@ const getDocument = async (data) => {
     removeExistingCompany,
     editCandidateExistingCompany,
     getCandidatesByCompany,
+    getDocumentsByCandidate,
+    getAndCategorizeAllDocuments,
+    verifyDocuments,
+    cancelDocuments,
+    getAllCompanies,
   };
+  
 }
