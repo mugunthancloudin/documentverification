@@ -38,7 +38,7 @@ export default function OwnerHome() {
             </div>
           </div>
           <div className="row mt-5">
-          {!checkOwner ? <OwnerPrivilages /> : null}
+          {checkOwner ? <OwnerPrivilages /> : null}
           </div>
         </div>
       </div>

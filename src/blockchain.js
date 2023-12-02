@@ -18,6 +18,7 @@ export default function Blockchain() {
   let success = "success";
   let info = "info";
   const { address, isConnected } = useAccount();
+  
 
   const GetEthereumContract = async () => {
     // if(isConnected)
@@ -47,9 +48,9 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (data) => {
+  const addVerifiers = async (data_) => {
     try {
-      let data = [data];
+      let data = [data_];
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data);
       await transaction.wait();
