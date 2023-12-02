@@ -8,6 +8,7 @@ export default function OwnerHome() {
   const { address, isConnected } = useAccount();
   const blockchain = Blockchain();
   const [checkOwner, setCheckOwner] = useState();
+  
   useEffect(() => {
     async function fetchData() {
       try {
