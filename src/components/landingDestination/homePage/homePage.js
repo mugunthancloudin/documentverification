@@ -35,8 +35,8 @@ export default function HomePage() {
             </div>
             </div>
             <div className="col-lg-6 text-end text-white pe-5">
-              <h1 className="homeH1 fw-bold">DOC-VERIFY</h1>
-              <p className="fw-bold">
+              <h1 className="homeH1 mb-5 fw-bold">DOC-VERIFY</h1>
+              <p className="fw-bold mb-5">
                 Tamper-proof Document Issuance & Verification System <br></br>
                 for Issuing Authorities to issue Verifiable Documents to{" "}
                 <br></br>Recipients, allowing them to store & share them{" "}

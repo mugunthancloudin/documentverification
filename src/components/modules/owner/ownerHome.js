@@ -33,7 +33,7 @@ export default function OwnerHome() {
               <h1>
               Get Connected now to unlock administrative access.
               </h1>
-              <div className="col-lg-12 text-center btnWagmi"><w3m-button /></div>
+              <div className="col-lg-6 text-center btnWagmi"><w3m-button /></div>
               
               
             </div>

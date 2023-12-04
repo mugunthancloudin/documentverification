@@ -61,7 +61,7 @@ export default function VerificationDashboard(props) {
               className="mb-3 verifier "
               justify
             >
-              <Tab eventKey="home" title="Not Verified">
+              <Tab eventKey="home" title="UnVerified">
                 <div className="container">
                   <div className="row">
                     <div className="col-lg-12">
