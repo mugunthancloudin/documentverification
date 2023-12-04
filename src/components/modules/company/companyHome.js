@@ -50,7 +50,7 @@ export default function CompanyHome() {
           <div className="row ">
           <div className="col-lg-6 text-center companyHome">
             <h1>Connect to your wallet to Continue as a company</h1>
-            <div className='companyBtn'><w3m-button /></div>
+            <div className='companyBtn col-lg-6'><w3m-button /></div>
               
             </div>
             <div className="col-lg-6 ">&nbsp;</div>

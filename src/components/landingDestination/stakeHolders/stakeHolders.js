@@ -16,7 +16,7 @@ export default function StakeHolders() {
             <h1 className="stakeHoldersBg text-center">Stakeholders</h1>
           </div>
           <div className="row mt-4">
-            <div className="col-lg-3 text-center mt-3">
+            <div className="col-lg-3 col-md-6 text-center mt-3">
               <img src={admin} alt="admin" className="img-container" />
               <h5 className="fw-bold mt-3 ">Admin</h5>
               <Link to="/owner">
@@ -24,7 +24,7 @@ export default function StakeHolders() {
               </Link>
             </div>
 
-            <div className="col-lg-3 text-center mt-3">
+            <div className="col-lg-3 col-md-6 text-center mt-3">
               <img src={verifier} alt="verifier" className="img-container" />
               <h5 className="fw-bold mt-3 ">Verifier</h5>
               <Link to="/verifier">
@@ -32,7 +32,7 @@ export default function StakeHolders() {
               </Link>
             </div>
 
-            <div className="col-lg-3 text-center mt-3">
+            <div className="col-lg-3 col-md-6 text-center mt-3">
               <img
                 src={orgsnisation}
                 alt="organisation"
@@ -44,14 +44,14 @@ export default function StakeHolders() {
               </Link>
             </div>
 
-            <div className="col-lg-3 text-center mt-3">
+            <div className="col-lg-3 col-md-6 text-center mt-3">
               <img
                 src={individual}
-                alt="individual"
+                alt="candidate"
                 className="img-container"
               />
               <h5 className="fw-bold mt-3 ">Individual</h5>
-              <Link to="/individual">
+              <Link to="/contact">
                 <button className="stackButton mt-2">contact</button>
               </Link>
             </div>

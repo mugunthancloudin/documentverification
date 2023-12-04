@@ -53,7 +53,7 @@ export default function CandidateHome() {
               </p>
               <hr className="mt-2" />
               <h5 className="mt-2">Connect to verify the certificates!</h5>
-              <div className="wagmiBtn" id="secondDiv">
+              <div className="wagmiBtn col-lg-6" id="secondDiv">
                 <w3m-button />
               </div>
             </div>

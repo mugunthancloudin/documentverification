@@ -81,11 +81,12 @@ export default function VerifierHome() {
                 </p>
                 <hr className="mt-2" />
                 <h5 className="mt-2">Connect to verify the certificates!</h5>
-                <div className="wagmiBtn mb-5">
+                </div>
+                <div className="verifierBtn mb-5">
                   <w3m-button />
                 </div>
                 {isConnected ? <VerifierPrivilages /> : null}
-              </div>
+              
             </div>
             <div className="col-lg-6">&nbsp;</div>
           </div>

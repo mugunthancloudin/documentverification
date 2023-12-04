@@ -1,7 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import LandingPage from "./pages/landingPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DestinationPage from "./pages/destinationPage";
 import Owner from "./pages/owner";
@@ -10,8 +9,6 @@ import Company from "./pages/company";
 import Candidate from "./pages/candidate";
 import ContactPage from "./pages/contactPage";
 import CandidateSubmit from "./pages/candidateSubmit";
-// import VerificationHomePage from "./components/pages/verificationHomePage";
-// import VerificationSubmitPage from "./components/pages/verificationSubmitPage";
 
 function App() {
   return (
