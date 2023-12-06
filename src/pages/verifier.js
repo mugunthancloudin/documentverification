@@ -9,7 +9,7 @@ export default function Verifier() {
     <>
       <Scrollbar />
       <VerifierHome />
-      <VerificationDashboard/>
+      {/* <VerificationDashboard/> */}
       <Footer />
     </>
   );

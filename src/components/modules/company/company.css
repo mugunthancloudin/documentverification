@@ -6,9 +6,25 @@
     
 }
 
-.xxx{
-    padding-top: 25%;
+.companyHome{
+    padding-top:15%;
+    color: white;
 }
+
+.companyBtn{
+  margin-left: 30%;
+  margin-top: 10%;
+  margin-bottom: 5%;
+}
+
+@media only screen and (max-width: 500px) {
+  .companyBtn{
+    margin-left: 10%;
+    margin-top: 10%;
+    margin-bottom: 5%;
+  }
+}
+
 
 
 .card {

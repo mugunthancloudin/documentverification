@@ -64,15 +64,15 @@ contract Verification is Ownable {
     Candidate[] public candidates;
     Document[] public documents;
 
-    function isCandidate() internal view returns (bool) {
+    function isCandidate() public view returns (bool) {
         return candidateAddress[msg.sender] != 0;
     }
 
-    function isCompany() internal view returns (bool) {
+    function isCompany() public view returns (bool) {
         return companyAddress[msg.sender] != 0;
     }
 
-    function isVerifier() internal view returns (bool) {
+    function isVerifier() public view returns (bool) {
         return isVerifier(msg.sender);
     }
 

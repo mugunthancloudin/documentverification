@@ -5,9 +5,10 @@ import { ethers } from "ethers";
 import { async } from "q";
 import Swal from "sweetalert2";
 import { error, log } from "console";
+import { error, log } from "console";
 
 const { ethereum } = window;
-const contractAddress = "0xf3660a55d54B70c1c8B8dA6606A528feB7891a10";
+const contractAddress = "0x6172CcA0FD742CE43821E231f85Ef0972B7911F7";
 const contractAbi = abi.abi;
 const privateKey =
   "736a61c7b4b6bd0a4b8fb66e5d76ac69329d7c8f4553063716c01f07364742cc";
@@ -18,6 +19,7 @@ export default function Blockchain() {
   let success = "success";
   let info = "info";
   const { address, isConnected } = useAccount();
+  
 
   const GetEthereumContract = async () => {
     // if(isConnected)
@@ -47,9 +49,9 @@ export default function Blockchain() {
     }
   };
 
-  const addVerifiers = async (data) => {
+  const addVerifiers = async (data_) => {
     try {
-      let data = [data];
+      let data = [data_];
       const contract = await GetEthereumContract();
       const transaction = await contract.addVerifiers(data);
       await transaction.wait();
@@ -73,20 +75,15 @@ export default function Blockchain() {
     }
   };
 
-  const replaceVerifiers = async (oldVerifier, newVerifier) => {
+  const replaceVerifiers = async (oldVerifiers, newVerifiers) => {
     try {
-      let oldVerifiers = [oldVerifier];
-      let newVerifiers = [newVerifier];
       const contract = await GetEthereumContract();
-      const transaction = await contract.replaceVerifiers(
-        oldVerifiers,
-        newVerifiers
-      );
+      const transaction = await contract.replaceVerifiers(oldVerifiers, newVerifiers);
       await transaction.wait();
       let hashValue = await transaction.hash;
       alert_(success, hashValue);
       console.log(`Verifiers replaced successfully`);
-    } catch (error) {
+    }catch (error) {
       // console.log(error);
       const errorMessage = error.message;
 
@@ -351,12 +348,19 @@ export default function Blockchain() {
   const addDocuments = async (data) => {
     try {
       const contract = await GetEthereumContract();
+      console.log(data);
+      let name=data.name
+      let ipfs=data.ipfsAddress
+      let candidateId=data.candidateId
+      let docType=data.docType
+      let expairyDate=data.expairyDate.toString()
+
       const transaction = await contract.addDocuments(
-        data.names,
-        data.cids,
-        data.candidateIds,
-        data.typesOfDocument,
-        data.expirationDates
+        name,
+        ipfs,
+        candidateId,
+        docType,
+        expairyDate
       );
       await transaction.wait();
       let hashValue = await transaction.hash;
@@ -458,11 +462,15 @@ export default function Blockchain() {
       const unverifiedDocuments = [];
       const cancelledDocuments = [];
 
-      const documentCount = await contract.documents.length();
-
-      for (let i = 1; i <= documentCount; i++) {
+      const getCount = await contract.getTotalDocuments();
+      let storeCount=Number(getCount)
+      console.log(Number(getCount));
+      // const document = await contract.documents(i);
+// console.log(document);
+      for (let i = 0; i < storeCount; i++) {
+        // console.log(i);
         const document = await contract.documents(i);
-
+// console.log(document);
         allDocuments.push(document);
 
         if (document.isVerified) {
@@ -473,17 +481,14 @@ export default function Blockchain() {
           unverifiedDocuments.push(document);
         }
       }
-
-      console.log(allDocuments);
-      console.log(verifiedDocuments);
-      console.log(unverifiedDocuments);
-      console.log(allDocuments);
-      // return {
-      //   allDocuments,
-      //   verifiedDocuments,
-      //   unverifiedDocuments,
-      //   cancelledDocuments,  
-      // };
+// console.log(allDocuments);
+// console.log(unverifiedDocuments);
+      return {
+        allDocuments,
+        verifiedDocuments,
+        unverifiedDocuments,
+        cancelledDocuments,
+      };
     } catch (error) {
       console.error("Error in categorize documents", error);
       throw error; // Propagate the error if needed
@@ -584,6 +589,57 @@ const getDocument = async (data) => {
       // console.log(contract);
       const result = await contract.getOwner();
       console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCompany = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCompany();
+      console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isCandidate = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isCandidate();
+      console.log(result);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching owner:", error);
+    }
+  };
+
+  const isVerifier = async (address) => {
+    console.log(address);
+    try {
+      const contract = await GetEthereumContract();
+      // console.log(contract);
+      const result = await contract.isVerifier();
+      console.log(result);
       if (address == result) {
         return true;
       } else {
@@ -606,6 +662,9 @@ const getDocument = async (data) => {
   return {
     addVerifiers,
     isOwner,
+    isCompany,
+    isCandidate,
+    isVerifier,
     replaceVerifiers,
     removeVerifiers,
     addCompanies,
@@ -620,6 +679,11 @@ const getDocument = async (data) => {
     verifyDocuments,
     cancelDocuments,
     getAllCompanies,
+    addDocuments,
+    isCompany,
+    isVerifier,
+    isCandidate,
   };
+  
   
 }

@@ -4,7 +4,6 @@ import instagram from "../../../assets/destinationPage/contact/instagram.png";
 import facebook from "../../../assets/destinationPage/contact/facebook.png";
 import twitter from "../../../assets/destinationPage/contact/twitter.png";
 import github from "../../../assets/destinationPage/contact/github.png";
-import Scrollbar from '../../header&footer/header/scrollbar'
 
 
 export default function HomePage() {
@@ -13,7 +12,7 @@ export default function HomePage() {
      
         <div className="container-fluid homeBg ">
           <div className="row">
-            <Scrollbar/>
+            
           </div>
           <div className="row">
             <div className="col-lg-6 d-none d-lg-block">
@@ -36,8 +35,8 @@ export default function HomePage() {
             </div>
             </div>
             <div className="col-lg-6 text-end text-white pe-5">
-              <h1 className="homeH1 fw-bold">DOC-VERIFY</h1>
-              <p className="fw-bold">
+              <h1 className="homeH1 mb-5 fw-bold">DOC-VERIFY</h1>
+              <p className="fw-bold mb-5">
                 Tamper-proof Document Issuance & Verification System <br></br>
                 for Issuing Authorities to issue Verifiable Documents to{" "}
                 <br></br>Recipients, allowing them to store & share them{" "}
